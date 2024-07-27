@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jacobcan - Loteria!</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Jacobcan - Loteria!</h1>
+        <p class="instruction">Aby zagrać, najpierw zaobserwuj konto na TikToku i Instagramie, a następnie wpisz hasło.</p>
+        <div class="social-links">
+            <a href="https://www.tiktok.com/@jacobcan_?lang=pl-PL" target="_blank" id="tiktokLink">Obserwuj na TikToku</a>
+            <a href="https://www.instagram.com/jacobcan_/" target="_blank" id="instagramLink">Obserwuj na Instagramie</a>
+        </div>
+        <input type="password" id="password" class="hidden" placeholder="Wpisz hasło">
+        <button id="submitPassword" class="hidden">Zatwierdź</button>
+        <div id="game" class="hidden">
+            <h2>Wybierz logo</h2>
+            <div class="logos">
+                <img src="logo1.png" class="logo" id="logo1">
+                <img src="logo2.png" class="logo" id="logo2">
+                <img src="logo3.png" class="logo" id="logo3">
+            </div>
+        </div>
+        <div id="result" class="hidden"></div>
+        <div id="taskList" class="hidden">
+            <h3>Zadania do wykonania:</h3>
+            <ul>
+                <li>Obserwuj konto <a href="https://www.tiktok.com/@jacobcan_?lang=pl-PL" target="_blank">@Jacobcan_</a> na TikToku</li>
+                <li>Obserwuj konto <a href="https://www.instagram.com/jacobcan_/" target="_blank">@Jacobcan_</a> na Instagramie</li>
+                <li>Wyślij wiadomość prywatną na IG/TT o treści: Jacobcan_loteria oraz screena strony z wygraną</li>
+                <li>Czekaj na przesyłkę!!</li>
+            </ul>
+        </div>
+        <div id="followersCount" class="hidden">
+            <h3>Obserwujących na TikToku: <span id="tiktokFollowers">Ładowanie...</span></h3>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

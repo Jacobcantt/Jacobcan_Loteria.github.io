@@ -1,0 +1,136 @@
+body {
+    background: url('background.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    text-align: center;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.8);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    width: 80%;
+    max-width: 600px;
+}
+
+.instruction {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+input[type="password"] {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 5px;
+    width: 200px;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #5cb85c;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #4cae4c;
+}
+
+.hidden {
+    display: none;
+}
+
+.logos {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.logo {
+    width: 100px;
+    height: 100px;
+    margin: 0 10px;
+    cursor: pointer;
+    transition: transform 0.5s ease;
+}
+
+.rotate {
+    animation: rotate180 0.5s forwards;
+}
+
+@keyframes rotate180 {
+    from {
+        transform: rotateY(0);
+    }
+    to {
+        transform: rotateY(360deg);
+    }
+}
+
+.logo:hover {
+    transform: scale(1.1);
+}
+
+.result-logo {
+    width: 100px;
+    height: 100px;
+    margin: 0 10px;
+}
+
+#result {
+    margin-top: 20px;
+    font-size: 24px;
+}
+
+#taskList {
+    margin-top: 20px;
+    text-align: left;
+}
+
+#taskList ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+#taskList li {
+    margin-bottom: 10px;
+}
+
+#taskList a {
+    color: #5cb85c;
+    text-decoration: none;
+}
+
+#taskList a:hover {
+    text-decoration: underline;
+}
+
+.social-links {
+    margin-bottom: 20px;
+}
+
+.social-links a {
+    display: inline-block;
+    margin: 0 10px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.social-links a:hover {
+    background-color: #0056b3;
+}
