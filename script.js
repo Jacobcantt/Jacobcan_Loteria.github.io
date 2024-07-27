@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (isWinner) {
             resultDiv.textContent = 'Wygrana! Aby zdobyć nagrodę, wykonaj poniższe zadania:';
+            taskListDiv.classList.remove('hidden');
         } else {
             resultDiv.textContent = 'Przegrana. Spróbuj ponownie.';
             taskListDiv.classList.add('hidden');
@@ -55,8 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function init() {
-        submitButton.addEventListener('click', checkPassword);
-
+        // Sprawdź, czy użytkownik brał udział w loterii
         if (localStorage.getItem('gamePlayed')) {
             const gameResult = localStorage.getItem('gameResult');
             const isWinner = gameResult === 'win';
@@ -71,6 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         } else {
+            // Dodaj event listeners do logotypów
             logos.forEach(logo => {
                 logo.addEventListener('click', handleClick);
             });
