@@ -1,6 +1,7 @@
 body {
     background-image: url('images/background.jpg');
     background-size: cover;
+    background-position: center;
     color: #fff;
     font-family: Arial, sans-serif;
     display: flex;
@@ -16,12 +17,12 @@ body {
     background-color: rgba(0, 0, 0, 0.8);
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-    width: 80%;
+    width: 90%;
     max-width: 600px;
 }
 
 .instruction {
-    font-size: 18px;
+    font-size: 1.2em;
     margin-bottom: 20px;
 }
 
@@ -30,7 +31,8 @@ input[type="password"] {
     margin-bottom: 10px;
     border: none;
     border-radius: 5px;
-    width: 200px;
+    width: 100%;
+    max-width: 300px;
 }
 
 button {
@@ -39,8 +41,10 @@ button {
     border-radius: 5px;
     background-color: #5cb85c;
     color: white;
-    font-size: 16px;
+    font-size: 1em;
     cursor: pointer;
+    width: 100%;
+    max-width: 300px;
 }
 
 button:hover {
@@ -53,14 +57,15 @@ button:hover {
 
 .logos {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
+    gap: 10px;
     margin-top: 20px;
 }
 
 .logo {
     width: 100px;
     height: 100px;
-    margin: 0 10px;
     cursor: pointer;
     transition: transform 0.5s ease;
 }
@@ -85,12 +90,11 @@ button:hover {
 .result-logo {
     width: 100px;
     height: 100px;
-    margin: 0 10px;
 }
 
 #result {
     margin-top: 20px;
-    font-size: 24px;
+    font-size: 1.5em;
 }
 
 #taskList {
@@ -122,8 +126,8 @@ button:hover {
 
 .social-links a {
     display: inline-block;
-    margin: 0 10px;
-    padding: 10px 20px;
+    margin: 0 5px;
+    padding: 10px 15px;
     background-color: #007bff;
     color: white;
     text-decoration: none;
@@ -133,4 +137,43 @@ button:hover {
 
 .social-links a:hover {
     background-color: #0056b3;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .instruction {
+        font-size: 1em;
+    }
+
+    input[type="password"], button {
+        max-width: 100%;
+    }
+
+    .logo {
+        width: 80px;
+        height: 80px;
+    }
+
+    #result {
+        font-size: 1.2em;
+    }
+}
+
+@media (max-width: 480px) {
+    .instruction {
+        font-size: 0.9em;
+    }
+
+    input[type="password"], button {
+        max-width: 100%;
+    }
+
+    .logo {
+        width: 60px;
+        height: 60px;
+    }
+
+    #result {
+        font-size: 1em;
+    }
 }
