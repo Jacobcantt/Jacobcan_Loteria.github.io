@@ -86,6 +86,8 @@ document.addEventListener('DOMContentLoaded', function() {
             instagramClicked = true;
             checkSocialLinks();
         });
+
+        submitButton.addEventListener('click', checkPassword);
     }
 
     function checkSocialLinks() {
