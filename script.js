@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
         taskListDiv.classList.remove('hidden');
         logos.forEach(logo => logo.removeEventListener('click', handleClick));
 
-        logo.src = isWinner ? 'logo4-win.png' : 'logo4-lose.png';
+        logo.src = isWinner ? 'logo4-win.jpg' : 'logo4-lose.jpg';
         logo.classList.remove('logo');
         logo.classList.add('result-logo');
 
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (index === 0) { // Display result on the first logo
                     displayResult(logo, isWinner);
                 } else {
-                    logo.src = 'logo4-lose.png';
+                    logo.src = 'logo4-lose.jpg';
                     logo.classList.remove('logo');
                     logo.classList.add('result-logo');
                 }
