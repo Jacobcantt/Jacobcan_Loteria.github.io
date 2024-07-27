@@ -31,7 +31,7 @@ input[type="password"] {
     margin-bottom: 10px;
     border: none;
     border-radius: 5px;
-    width: 100%;
+    width: 40%;
     max-width: 250px; /* Zmniejszenie szerokości pola */
 }
 
@@ -43,7 +43,7 @@ button {
     color: white;
     font-size: 1em;
     cursor: pointer;
-    width: 100%;
+    width: 40%;
     max-width: 250px; /* Zmniejszenie szerokości przycisku */
 }
 
