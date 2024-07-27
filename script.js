@@ -6,8 +6,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const gameDiv = document.getElementById('game');
     const resultDiv = document.getElementById('result');
     const taskListDiv = document.getElementById('taskList');
-    const followersCountDiv = document.getElementById('followersCount');
-    const tiktokFollowersSpan = document.getElementById('tiktokFollowers');
     const logos = document.querySelectorAll('.logo');
     const correctPassword = 'twoje_haslo'; // Zmień to na swoje hasło
     const winnerProbability = 0.9;
@@ -44,13 +42,12 @@ document.addEventListener('DOMContentLoaded', function() {
         taskListDiv.classList.remove('hidden');
         logos.forEach(logo => logo.removeEventListener('click', handleClick));
 
-        logo.src = isWinner ? 'logo4-win.jpg' : 'logo4-lose.jpg';
+        logo.src = isWinner ? 'images/logo4-win.png' : 'images/logo4-lose.png';
         logo.classList.remove('logo');
         logo.classList.add('result-logo');
 
         if (isWinner) {
             resultDiv.textContent = 'Wygrana! Aby zdobyć nagrodę, wykonaj poniższe zadania:';
-            taskListDiv.classList.remove('hidden');
         } else {
             resultDiv.textContent = 'Przegrana. Spróbuj ponownie.';
             taskListDiv.classList.add('hidden');
@@ -68,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (index === 0) { // Display result on the first logo
                     displayResult(logo, isWinner);
                 } else {
-                    logo.src = 'logo4-lose.jpg';
+                    logo.src = 'images/logo4-lose.png';
                     logo.classList.remove('logo');
                     logo.classList.add('result-logo');
                 }
@@ -88,27 +85,12 @@ document.addEventListener('DOMContentLoaded', function() {
             instagramClicked = true;
             checkSocialLinks();
         });
-
-        fetchTikTokFollowers();
     }
 
     function checkSocialLinks() {
         if (tiktokClicked && instagramClicked) {
             passwordInput.classList.remove('hidden');
             submitButton.classList.remove('hidden');
-        }
-    }
-
-    async function fetchTikTokFollowers() {
-        try {
-            const response = await fetch('YOUR_PROXY_SERVER_ENDPOINT'); // Zastąp to odpowiednim URL-em do serwera proxy
-            const data = await response.json();
-            const followersCount = data.data.user.followers_count;
-            tiktokFollowersSpan.textContent = followersCount;
-            followersCountDiv.classList.remove('hidden');
-        } catch (error) {
-            console.error('Error fetching TikTok followers:', error);
-            tiktokFollowersSpan.textContent = 'Błąd ładowania';
         }
     }
 
