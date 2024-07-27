@@ -66,10 +66,10 @@ button:hover {
 }
 
 .rotate {
-    animation: rotate180 0.5s forwards;
+    animation: rotate360 0.5s forwards;
 }
 
-@keyframes rotate180 {
+@keyframes rotate360 {
     from {
         transform: rotateY(0);
     }
