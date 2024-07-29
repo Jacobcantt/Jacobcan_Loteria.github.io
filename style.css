@@ -93,8 +93,8 @@ button:hover {
 }
 
 .logo {
-    width: 150px;
-    height: 150px;
+    width: 200px;
+    height: 200px;
     margin: 0 10px;
     cursor: pointer;
     transition: transform 0.5s ease;
@@ -199,13 +199,13 @@ button:hover {
     }
 
     .logo {
-        width: 60px;
-        height: 60px;
+        width: 200px;
+        height: 200px;
     }
 
     .result-logo {
-        width: 60px;
-        height: 60px;
+        width: 150px;
+        height: 150px;
     }
 
     .social-links a {
