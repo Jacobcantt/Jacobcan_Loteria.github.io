@@ -9,13 +9,16 @@
 <body>
     <div class="container">
         <h1>Jacobcan - Loteria!</h1>
-        <p class="instruction">Aby zagrać, najpierw zaobserwuj konto na TikToku i Instagramie, a następnie kliknij poniższe linki, aby odblokować pole do wpisania hasła.</p>
-        <div class="social-links">
-            <a href="https://www.tiktok.com/@jacobcan_?lang=pl-PL" target="_blank" id="tiktokLink">Obserwuj na TikToku</a>
-            <a href="https://www.instagram.com/jacobcan_/" target="_blank" id="instagramLink">Obserwuj na Instagramie</a>
-        </div>
-        <input type="password" id="password" class="hidden" placeholder="Wpisz hasło">
-        <button id="submitPassword" class="hidden">Zatwierdź</button>
+        <p class="instruction">Aby zagrać, wprowadź swoje dane, hasło i zaloguj się.</p>
+        <h5>Pamiętaj aby obserwować mnie na social mediach! (Jeśli wygrasz, a nie obserwujesz, to nie wygrywasz)</h5>
+
+        <form id="loginForm">
+            <input type="text" id="phoneNumber" placeholder="Numer telefonu" required>
+            <input type="email" id="email" placeholder="E-mail" required>
+            <input type="password" id="password" placeholder="Hasło" required>
+            <button type="submit">Zaloguj się</button>
+        </form>
+        
         <div id="game" class="hidden">
             <h2>Wybierz logo</h2>
             <div class="logos">
@@ -34,7 +37,11 @@
                 <li>Czekaj na przesyłkę!!</li>
             </ul>
         </div>
+        <div class="links">
+            <a href="https://jacobcantt.github.io/Privacy_policy/" target="_blank">Polityka prywatności</a> | 
+            <a href="https://jacobcantt.github.io/Terms-of-Service/" target="_blank">Warunki korzystania</a>
+        </div>
     </div>
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
