@@ -189,7 +189,7 @@ button:hover {
     input[type="text"],
     input[type="email"],
     input[type="password"] {
-        width: 100%;
+        width: 80%;
         max-width: none; /* Usuń maksymalną szerokość */
     }
 
