@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const resultDiv = document.getElementById('result');
     const taskListDiv = document.getElementById('taskList');
     const logos = document.querySelectorAll('.logo');
-    const correctPassword = 'kuba'; // Zmień to na swoje hasło
+    const correctPassword = 'twoje_haslo'; // Zmień to na swoje hasło
     const winnerProbability = 0.9;
 
     loginForm.addEventListener('submit', async (event) => {
@@ -90,11 +90,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function saveResultToFirestore(phoneNumber, email, isWinner) {
         try {
+            // Pobierz aktualny czas w formacie europejskim
+            const timestamp = new Date().toLocaleString('pl-PL', { 
+                timeZone: 'Europe/Warsaw', // Strefa czasowa lokalna
+                day: '2-digit', 
+                month: '2-digit', 
+                year: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit' 
+            });
+            
             await addDoc(collection(db, "results"), {
                 phoneNumber: phoneNumber,
                 email: email,
                 result: isWinner ? 'win' : 'lose',
-                timestamp: new Date()
+                timestamp: timestamp
             });
             console.log("Wynik zapisany pomyślnie");
         } catch (e) {
