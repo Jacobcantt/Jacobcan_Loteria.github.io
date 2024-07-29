@@ -25,21 +25,54 @@ body {
     margin-bottom: 20px;
 }
 
+h5 {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.552);
+  }
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+input[type="text"],
+input[type="email"],
 input[type="password"] {
-    padding: 8px;
+    padding: 10px;
     margin-bottom: 10px;
-    border: none;
+    border: 0.5px solid rgb(255, 255, 255);
     border-radius: 5px;
-    width: 150px;
+    width: 80%;
+    max-width: 300px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #fff; /* Kolor tekstu */
+    font-size: 16px;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+input[type="text"]::placeholder,
+input[type="email"]::placeholder,
+input[type="password"]::placeholder {
+    color: #ffffffac; /* Kolor placeholdera */
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus {
+    background-color: rgba(15, 15, 15, 0.3);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    outline: none;
 }
 
 button {
-    padding: 8px 15px;
+    padding: 10px 20px;
     border: none;
     border-radius: 5px;
     background-color: #5cb85c;
     color: white;
-    font-size: 14px;
+    font-size: 16px;
     cursor: pointer;
 }
 
@@ -59,8 +92,8 @@ button:hover {
 }
 
 .logo {
-    width: 80px;
-    height: 80px;
+    width: 150px;
+    height: 150px;
     margin: 0 10px;
     cursor: pointer;
     transition: transform 0.5s ease;
@@ -84,8 +117,8 @@ button:hover {
 }
 
 .result-logo {
-    width: 80px;
-    height: 80px;
+    width: 150px;
+    height: 150px;
     margin: 0 10px;
 }
 
@@ -136,7 +169,24 @@ button:hover {
     background-color: #0056b3;
 }
 
+.links {
+    margin-top: 20px;
+    font-size: 14px;
+    color: white;
+}
+
+.links a {
+    color: white;
+    text-decoration: none;
+}
+
+.links a:hover {
+    text-decoration: underline;
+}
+
 @media (max-width: 600px) {
+    input[type="text"],
+    input[type="email"],
     input[type="password"] {
         width: 100px;
     }
@@ -159,5 +209,9 @@ button:hover {
     .social-links a {
         padding: 8px 15px;
         font-size: 14px;
+    }
+
+    .links {
+        font-size: 12px;
     }
 }
