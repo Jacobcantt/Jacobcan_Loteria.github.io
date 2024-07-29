@@ -1,5 +1,6 @@
 body {
     background-image: url('images/background.jpg');
+    background-position: center;
     background-size: cover;
     color: #fff;
     font-family: Arial, sans-serif;
@@ -40,12 +41,12 @@ form {
 input[type="text"],
 input[type="email"],
 input[type="password"] {
-    padding: 10px;
+    padding: 15px; /* Zwiększone wypełnienie */
     margin-bottom: 10px;
     border: 0.5px solid rgb(255, 255, 255);
     border-radius: 5px;
-    width: 80%;
-    max-width: 300px;
+    width: 90%; /* Zwiększona szerokość */
+    max-width: 400px; /* Zwiększona maksymalna szerokość */
     background-color: rgba(255, 255, 255, 0.2);
     color: #fff; /* Kolor tekstu */
     font-size: 16px;
@@ -188,7 +189,8 @@ button:hover {
     input[type="text"],
     input[type="email"],
     input[type="password"] {
-        width: 100px;
+        width: 100%;
+        max-width: none; /* Usuń maksymalną szerokość */
     }
 
     button {
