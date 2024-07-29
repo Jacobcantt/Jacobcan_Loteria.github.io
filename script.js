@@ -1,24 +1,52 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+import { getFirestore, collection, query, where, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyAcw63opkkCEr44dafnWMGf-7N9tzVepxE",
+    authDomain: "login-page-e09ea.firebaseapp.com",
+    projectId: "login-page-e09ea",
+    storageBucket: "login-page-e09ea.appspot.com",
+    messagingSenderId: "966052546550",
+    appId: "1:966052546550:web:c2db5ee2b2222e6a25a9d7",
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
 document.addEventListener('DOMContentLoaded', function() {
-    const tiktokLink = document.getElementById('tiktokLink');
-    const instagramLink = document.getElementById('instagramLink');
-    const passwordInput = document.getElementById('password');
-    const submitButton = document.getElementById('submitPassword');
+    const loginForm = document.getElementById('loginForm');
     const gameDiv = document.getElementById('game');
     const resultDiv = document.getElementById('result');
     const taskListDiv = document.getElementById('taskList');
     const logos = document.querySelectorAll('.logo');
-    const correctPassword = 'twoje_haslo'; // Zmień to na swoje hasło
+    const correctPassword = 'kuba'; // Zmień to na swoje hasło
     const winnerProbability = 0.9;
-    let tiktokClicked = false;
-    let instagramClicked = false;
 
-    function checkPassword() {
-        if (passwordInput.value === correctPassword) {
+    loginForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const phoneNumber = document.getElementById('phoneNumber').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        if (password !== correctPassword) {
+            alert('Nieprawidłowe hasło.');
+            return;
+        }
+
+        const usersRef = collection(db, "users");
+        const q = query(usersRef, where("phoneNumber", "==", phoneNumber), where("email", "==", email));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+            await addDoc(usersRef, { phoneNumber, email });
             gameDiv.classList.remove('hidden');
         } else {
-            alert('Niepoprawne hasło');
+            alert('Użytkownik o podanym numerze telefonu i adresie e-mail już istnieje.');
         }
-    }
+    });
 
     function handleClick(event) {
         const selectedLogo = event.target;
@@ -32,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('gamePlayed', 'true');
         localStorage.setItem('gameResult', isWinner ? 'win' : 'lose');
         displayResult(selectedLogo, isWinner);
-        
+
         // Dodaj animację obrotu
         selectedLogo.classList.add('rotate');
     }
@@ -53,49 +81,28 @@ document.addEventListener('DOMContentLoaded', function() {
             resultDiv.textContent = 'Przegrana. Spróbuj ponownie.';
             taskListDiv.classList.add('hidden');
         }
+
+        // Zapisz wynik do Firestore
+        const phoneNumber = document.getElementById('phoneNumber').value;
+        const email = document.getElementById('email').value;
+        saveResultToFirestore(phoneNumber, email, isWinner);
     }
 
-    function init() {
-        // Sprawdź, czy użytkownik brał udział w loterii
-        if (localStorage.getItem('gamePlayed')) {
-            const gameResult = localStorage.getItem('gameResult');
-            const isWinner = gameResult === 'win';
-
-            logos.forEach((logo, index) => {
-                if (index === 0) { // Display result on the first logo
-                    displayResult(logo, isWinner);
-                } else {
-                    logo.src = 'images/logo4-lose.png';
-                    logo.classList.remove('logo');
-                    logo.classList.add('result-logo');
-                }
+    async function saveResultToFirestore(phoneNumber, email, isWinner) {
+        try {
+            await addDoc(collection(db, "results"), {
+                phoneNumber: phoneNumber,
+                email: email,
+                result: isWinner ? 'win' : 'lose',
+                timestamp: new Date()
             });
-        } else {
-            // Dodaj event listeners do logotypów
-            logos.forEach(logo => {
-                logo.addEventListener('click', handleClick);
-            });
-        }
-
-        tiktokLink.addEventListener('click', function() {
-            tiktokClicked = true;
-            checkSocialLinks();
-        });
-
-        instagramLink.addEventListener('click', function() {
-            instagramClicked = true;
-            checkSocialLinks();
-        });
-
-        submitButton.addEventListener('click', checkPassword);
-    }
-
-    function checkSocialLinks() {
-        if (tiktokClicked && instagramClicked) {
-            passwordInput.classList.remove('hidden');
-            submitButton.classList.remove('hidden');
+            console.log("Wynik zapisany pomyślnie");
+        } catch (e) {
+            console.error("Błąd podczas zapisywania wyniku: ", e);
         }
     }
 
-    init();
+    logos.forEach(logo => {
+        logo.addEventListener('click', handleClick);
+    });
 });
