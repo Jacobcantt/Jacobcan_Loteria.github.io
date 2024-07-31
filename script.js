@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-import { getFirestore, collection, query, where, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+import { getFirestore, collection, getDocs, addDoc, query, where, updateDoc, arrayUnion, arrayRemove, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
-// Your web app's Firebase configuration
+// Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyAcw63opkkCEr44dafnWMGf-7N9tzVepxE",
     authDomain: "login-page-e09ea.firebaseapp.com",
@@ -9,111 +9,188 @@ const firebaseConfig = {
     storageBucket: "login-page-e09ea.appspot.com",
     messagingSenderId: "966052546550",
     appId: "1:966052546550:web:c2db5ee2b2222e6a25a9d7",
+    measurementId: "G-H36NM4MTRF"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
-    const gameDiv = document.getElementById('game');
-    const resultDiv = document.getElementById('result');
-    const taskListDiv = document.getElementById('taskList');
-    const logos = document.querySelectorAll('.logo');
-    const correctPassword = 'twoje_haslo'; // Zmień to na swoje hasło
-    const winnerProbability = 0.9;
+    const songListDiv = document.getElementById('songList');
+    const songsUl = document.getElementById('songs');
+    const loginContainer = document.querySelector('.login-container');
+    const instructionText = document.querySelector('.instruction');
+    let currentUsername = '';
 
-    loginForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-        const phoneNumber = document.getElementById('phoneNumber').value;
-        const email = document.getElementById('email').value;
+        const instagramUrl = document.getElementById('instagramUrl').value;
         const password = document.getElementById('password').value;
+        const username = extractUsername(instagramUrl);
 
-        if (password !== correctPassword) {
-            alert('Nieprawidłowe hasło.');
-            return;
+        if (username) {
+            try {
+                const userExists = await checkUserExists(instagramUrl, password);
+                if (userExists) {
+                    currentUsername = username;
+                    showUserContent(username);
+                } else {
+                    const urlExistsWithDifferentPassword = await checkUrlWithDifferentPassword(instagramUrl, password);
+                    if (urlExistsWithDifferentPassword) {
+                        alert('Ten URL został już zarejestrowany z innym hasłem.');
+                    } else {
+                        await registerUser(instagramUrl, password);
+                        currentUsername = username;
+                        showUserContent(username);
+                    }
+                }
+            } catch (error) {
+                console.error('Error during registration or login:', error);
+            }
+        } else {
+            alert('Nieprawidłowy link do profilu na Instagramie.');
         }
+    });
 
-        const usersRef = collection(db, "users");
-        const q = query(usersRef, where("phoneNumber", "==", phoneNumber), where("email", "==", email));
+    function extractUsername(url) {
+        const match = url.match(/(?:https?:\/\/)?(?:www\.)?instagram\.com\/([a-zA-Z0-9._]+)/);
+        return match ? match[1] : null;
+    }
+
+    async function checkUserExists(instagramUrl, password) {
+        const osobyRef = collection(db, 'osoby');
+        const q = query(osobyRef, where('instagramUrl', '==', instagramUrl), where('password', '==', password));
         const querySnapshot = await getDocs(q);
-
-        if (querySnapshot.empty) {
-            await addDoc(usersRef, { phoneNumber, email });
-            gameDiv.classList.remove('hidden');
-        } else {
-            alert('Użytkownik o podanym numerze telefonu i adresie e-mail już istnieje.');
-        }
-    });
-
-    function handleClick(event) {
-        const selectedLogo = event.target;
-
-        if (localStorage.getItem('gamePlayed')) {
-            alert('Już raz grałeś. Odświeżenie strony nie pozwala na ponowne zagranie.');
-            return;
-        }
-
-        const isWinner = Math.random() < winnerProbability;
-        localStorage.setItem('gamePlayed', 'true');
-        localStorage.setItem('gameResult', isWinner ? 'win' : 'lose');
-        displayResult(selectedLogo, isWinner);
-
-        // Dodaj animację obrotu
-        selectedLogo.classList.add('rotate');
+        return !querySnapshot.empty;
     }
 
-    function displayResult(logo, isWinner) {
-        resultDiv.classList.remove('hidden');
-        taskListDiv.classList.remove('hidden');
-        logos.forEach(logo => logo.removeEventListener('click', handleClick));
-
-        logo.src = isWinner ? 'images/logo4-win.png' : 'images/logo4-lose.png';
-        logo.classList.remove('logo');
-        logo.classList.add('result-logo');
-
-        if (isWinner) {
-            resultDiv.textContent = 'Wygrana! Aby zdobyć nagrodę, wykonaj poniższe zadania:';
-            taskListDiv.classList.remove('hidden');
-        } else {
-            resultDiv.textContent = 'Przegrana. Spróbuj ponownie.';
-            taskListDiv.classList.add('hidden');
+    async function checkUrlWithDifferentPassword(instagramUrl, password) {
+        const osobyRef = collection(db, 'osoby');
+        const q = query(osobyRef, where('instagramUrl', '==', instagramUrl));
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+            const doc = querySnapshot.docs[0];
+            const data = doc.data();
+            return data.password !== password;
         }
-
-        // Zapisz wynik do Firestore
-        const phoneNumber = document.getElementById('phoneNumber').value;
-        const email = document.getElementById('email').value;
-        saveResultToFirestore(phoneNumber, email, isWinner);
+        return false;
     }
 
-    async function saveResultToFirestore(phoneNumber, email, isWinner) {
+    async function registerUser(instagramUrl, password) {
+        const osobyRef = collection(db, 'osoby');
+        await addDoc(osobyRef, { instagramUrl, password });
+    }
+
+    async function showUserContent(username) {
+        instructionText.textContent = `Witaj, ${username}!`;
+        loginContainer.style.display = 'none';
+        songListDiv.classList.remove('hidden');
+        loadSongs();
+    }
+
+    function extractTitleFromUrl(url) {
+        const match = url.match(/(?:https?:\/\/)?(?:www\.)?tiktok\.com\/music\/([a-zA-Z0-9._-]+)/);
+        if (match) {
+            let title = match[1].replace(/-/g, ' ');  // Zamiana myślników na spacje
+            title = title.replace(/\s+\d+$/, ''); // Usunięcie numerków na końcu
+            return title;
+        }
+        return 'Unknown Title';
+    }
+
+    async function loadSongs() {
         try {
-            // Pobierz aktualny czas w formacie europejskim
-            const timestamp = new Date().toLocaleString('pl-PL', { 
-                timeZone: 'Europe/Warsaw', // Strefa czasowa lokalna
-                day: '2-digit', 
-                month: '2-digit', 
-                year: 'numeric', 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                second: '2-digit' 
+            const songsRef = collection(db, 'songs');
+            const songSnapshot = await getDocs(songsRef);
+            const songs = songSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+            songsUl.innerHTML = '';
+            for (const song of songs) {
+                const thumbnailUrl = song.thumbnail || ''; 
+                const title = song.title || extractTitleFromUrl(song.tiktokUrl);
+                const audioUrl = song.audioUrl || ''; // Pobieranie URL do pliku MP3
+                const registeredUsers = song.registeredUsers || [];
+                const userIsRegistered = registeredUsers.includes(currentUsername);
+
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <a href="${song.tiktokUrl}" target="_blank">
+                        <img src="${thumbnailUrl}" alt="${title} thumbnail">
+                    </a>
+                    <span>${title}</span>
+                    <audio controls>
+                        <source src="${audioUrl}" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                    <span class="users">${registeredUsers.join(', ')}</span>
+                    <button class="add-user-btn" data-id="${song.id}" data-state="${userIsRegistered ? 'remove' : 'add'}">
+                        ${userIsRegistered ? '-' : '+'}
+                    </button>
+                `;
+                songsUl.appendChild(li);
+            }
+
+            const addUserButtons = document.querySelectorAll('.add-user-btn');
+            addUserButtons.forEach(button => {
+                button.addEventListener('click', handleAddUserClick);
             });
-            
-            await addDoc(collection(db, "results"), {
-                phoneNumber: phoneNumber,
-                email: email,
-                result: isWinner ? 'win' : 'lose',
-                timestamp: timestamp
-            });
-            console.log("Wynik zapisany pomyślnie");
-        } catch (e) {
-            console.error("Błąd podczas zapisywania wyniku: ", e);
+
+            songListDiv.classList.remove('hidden');
+        } catch (error) {
+            console.error('Error loading songs:', error);
         }
     }
 
-    logos.forEach(logo => {
-        logo.addEventListener('click', handleClick);
-    });
+    async function handleAddUserClick(event) {
+        const songId = event.target.dataset.id;
+        const songRef = doc(db, 'songs', songId);
+        const songDoc = await getDoc(songRef);
+        const songData = songDoc.data();
+        const registeredUsers = songData.registeredUsers || [];
+
+        if (registeredUsers.includes(currentUsername)) {
+            await updateDoc(songRef, {
+                registeredUsers: arrayRemove(currentUsername)
+            });
+        } else {
+            await updateDoc(songRef, {
+                registeredUsers: arrayUnion(currentUsername)
+            });
+        }
+        loadSongs();
+    }
+
+    async function fetchThumbnailUrl(tiktokUrl) {
+        try {
+            const response = await fetch(`https://www.tiktok.com/oembed?url=${tiktokUrl}`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            return data.thumbnail_url;
+        } catch (error) {
+            console.error('Error fetching TikTok details:', error);
+            return null;
+        }
+    }
+
+    async function updateSongsWithThumbnails() {
+        const songsRef = collection(db, 'songs');
+        const songSnapshot = await getDocs(songsRef);
+
+        for (const doc of songSnapshot.docs) {
+            const songData = doc.data();
+            const thumbnailUrl = await fetchThumbnailUrl(songData.tiktokUrl);
+            
+            if (thumbnailUrl) {
+                await updateDoc(doc.ref, { thumbnail: thumbnailUrl });
+            }
+        }
+    }
+
+    // Uncomment the following line if you need to update thumbnails manually
+    // updateSongsWithThumbnails();
 });
