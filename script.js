@@ -154,7 +154,7 @@ function initMemoryGame() {
             secondCard.classList.remove('flipped');
 
             resetBoard();
-        }, 1500);
+        }, 800);
     }
 
     function resetBoard() {
@@ -195,7 +195,7 @@ async function submitFinalTask() {
     //const ip = await getUserIP();
     //localStorage.setItem(ip, JSON.stringify({ tiktokNick }));
     await saveUserToFirestore(tiktokNick); // Zapis do Firestore
-    alert("Zadanie wykonane! Wyślij wiadomość na IG z dowodem.");
+    alert("Brawo! Czekam na twoją wiadomość!");
     location.reload();
 }
 
