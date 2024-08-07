@@ -1,7 +1,8 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-import { getFirestore, collection, getDocs, addDoc, query, where, updateDoc, arrayUnion, arrayRemove, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+// Firebase SDK Imports
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
 
-// Firebase configuration
+// Konfiguracja Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyAcw63opkkCEr44dafnWMGf-7N9tzVepxE",
     authDomain: "login-page-e09ea.firebaseapp.com",
@@ -12,185 +13,213 @@ const firebaseConfig = {
     measurementId: "G-H36NM4MTRF"
 };
 
-// Initialize Firebase
+// Inicjalizacja Firebase i Firestore
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-document.addEventListener('DOMContentLoaded', () => {
-    const loginForm = document.getElementById('loginForm');
-    const songListDiv = document.getElementById('songList');
-    const songsUl = document.getElementById('songs');
-    const loginContainer = document.querySelector('.login-container');
-    const instructionText = document.querySelector('.instruction');
-    let currentUsername = '';
+const accessCode = 'qwert';
+const igFollowers = 221;
+const girlNick = 'NICK_GIRL';
 
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
+// Funkcja do sprawdzenia, czy użytkownik już brał udział
+async function checkUserParticipation() {
+   /* const ip = await getUserIP();
+    const participant = localStorage.getItem(ip);
+    if (participant) {
+        alert("Już wziąłeś udział w wyzwaniu!");
+        document.body.innerHTML = "";
+    }*/
+}
 
-        const instagramUrl = document.getElementById('instagramUrl').value;
-        const password = document.getElementById('password').value;
-        const username = extractUsername(instagramUrl);
+// Sprawdzenie kodu dostępu
+function checkAccessCode() {
+    const inputCode = document.getElementById('access-code').value;
+    if (inputCode === accessCode) {
+        showSection('question1');
+    } else {
+        alert("Niepoprawny kod!");
+        location.reload();
+    }
+}
 
-        if (username) {
-            try {
-                const userExists = await checkUserExists(instagramUrl, password);
-                if (userExists) {
-                    currentUsername = username;
-                    showUserContent(username);
-                } else {
-                    const urlExistsWithDifferentPassword = await checkUrlWithDifferentPassword(instagramUrl, password);
-                    if (urlExistsWithDifferentPassword) {
-                        alert('Ten URL został już zarejestrowany z innym hasłem.');
-                    } else {
-                        await registerUser(instagramUrl, password);
-                        currentUsername = username;
-                        showUserContent(username);
-                    }
-                }
-            } catch (error) {
-                console.error('Error during registration or login:', error);
-            }
-        } else {
-            alert('Nieprawidłowy link do profilu na Instagramie.');
-        }
+// Sprawdzenie liczby obserwujących na IG
+function checkIGFollowers() {
+    const inputFollowers = parseInt(document.getElementById('ig-followers').value);
+    if (inputFollowers === igFollowers) {
+        showSection('question2');
+    } else {
+        alert("Niepoprawna liczba obserwujących!");
+        location.reload();
+    }
+}
+
+// Sprawdzenie nicku dziewczyny
+function checkGirlNick() {
+    const inputNick = document.getElementById('girl-nick').value;
+    if (inputNick === girlNick) {
+        showSection('question3');
+        initMemoryGame();
+    } else {
+        alert("Niepoprawny nick!");
+        location.reload();
+    }
+}
+
+function initMemoryGame() {
+    const memoryBoard = document.getElementById('memory-board');
+    const restartBtn = document.getElementById('restart-btn');
+    const cardArray = [
+        { name: 'J', img: 'J' },
+        { name: 'A', img: 'A' },
+        { name: 'C', img: 'C' },
+        { name: 'O', img: 'O' },
+        { name: 'B', img: 'B' },
+        { name: 'C', img: 'C' },
+        { name: 'A', img: 'A' },
+        { name: 'N', img: 'N' },
+        { name: 'J', img: 'J' },
+        { name: 'A', img: 'A' },
+        { name: 'C', img: 'C' },
+        { name: 'O', img: 'O' },
+        { name: 'B', img: 'B' },
+        { name: 'C', img: 'C' },
+        { name: 'A', img: 'A' },
+        { name: 'N', img: 'N' }
+    ];
+    cardArray.sort(() => 0.5 - Math.random());
+
+    while (memoryBoard.firstChild) {
+        memoryBoard.removeChild(memoryBoard.firstChild);
+    }
+
+    cardArray.forEach(item => {
+        const card = document.createElement('div');
+        card.classList.add('memory-card');
+        card.dataset.name = item.name;
+
+        const frontFace = document.createElement('div');
+        frontFace.classList.add('front-face');
+        frontFace.textContent = item.img;
+
+        const backFace = document.createElement('div');
+        backFace.classList.add('back-face');
+        backFace.textContent = '?';
+
+        card.appendChild(backFace);  // Dodajemy najpierw tylną stronę
+        card.appendChild(frontFace); // Następnie przednią stronę
+        memoryBoard.appendChild(card);
     });
 
-    function extractUsername(url) {
-        const match = url.match(/(?:https?:\/\/)?(?:www\.)?instagram\.com\/([a-zA-Z0-9._]+)/);
-        return match ? match[1] : null;
-    }
+    let hasFlippedCard = false;
+    let lockBoard = false;
+    let firstCard, secondCard;
 
-    async function checkUserExists(instagramUrl, password) {
-        const osobyRef = collection(db, 'osoby');
-        const q = query(osobyRef, where('instagramUrl', '==', instagramUrl), where('password', '==', password));
-        const querySnapshot = await getDocs(q);
-        return !querySnapshot.empty;
-    }
+    function flipCard() {
+        if (lockBoard) return;
+        if (this === firstCard) return;
 
-    async function checkUrlWithDifferentPassword(instagramUrl, password) {
-        const osobyRef = collection(db, 'osoby');
-        const q = query(osobyRef, where('instagramUrl', '==', instagramUrl));
-        const querySnapshot = await getDocs(q);
-        if (!querySnapshot.empty) {
-            const doc = querySnapshot.docs[0];
-            const data = doc.data();
-            return data.password !== password;
+        this.classList.add('flipped');
+
+        if (!hasFlippedCard) {
+            hasFlippedCard = true;
+            firstCard = this;
+            return;
         }
-        return false;
+
+        secondCard = this;
+        lockBoard = true;
+
+        checkForMatch();
     }
 
-    async function registerUser(instagramUrl, password) {
-        const osobyRef = collection(db, 'osoby');
-        await addDoc(osobyRef, { instagramUrl, password });
-    }
-
-    async function showUserContent(username) {
-        instructionText.textContent = `Witaj, ${username}!`;
-        loginContainer.style.display = 'none';
-        songListDiv.classList.remove('hidden');
-        loadSongs();
-    }
-
-    function extractTitleFromUrl(url) {
-        const match = url.match(/(?:https?:\/\/)?(?:www\.)?tiktok\.com\/music\/([a-zA-Z0-9._-]+)/);
-        if (match) {
-            let title = match[1].replace(/-/g, ' ');  // Zamiana myślników na spacje
-            title = title.replace(/\s+\d+$/, ''); // Usunięcie numerków na końcu
-            return title;
+    function checkForMatch() {
+        if (firstCard.dataset.name === secondCard.dataset.name) {
+            disableCards();
+            return;
         }
-        return 'Unknown Title';
+
+        unflipCards();
     }
 
-    async function loadSongs() {
-        try {
-            const songsRef = collection(db, 'songs');
-            const songSnapshot = await getDocs(songsRef);
-            const songs = songSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    function disableCards() {
+        firstCard.removeEventListener('click', flipCard);
+        secondCard.removeEventListener('click', flipCard);
 
-            songsUl.innerHTML = '';
-            for (const song of songs) {
-                const thumbnailUrl = song.thumbnail || ''; 
-                const title = song.title || extractTitleFromUrl(song.tiktokUrl);
-                const audioUrl = song.audioUrl || ''; // Pobieranie URL do pliku MP3
-                const registeredUsers = song.registeredUsers || [];
-                const userIsRegistered = registeredUsers.includes(currentUsername);
+        resetBoard();
+    }
 
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    <a href="${song.tiktokUrl}" target="_blank">
-                        <img src="${thumbnailUrl}" alt="${title} thumbnail">
-                    </a>
-                    <span>${title}</span>
-                    <audio controls>
-                        <source src="${audioUrl}" type="audio/mpeg">
-                        Your browser does not support the audio element.
-                    </audio>
-                    <span class="users">${registeredUsers.join(', ')}</span>
-                    <button class="add-user-btn" data-id="${song.id}" data-state="${userIsRegistered ? 'remove' : 'add'}">
-                        ${userIsRegistered ? '-' : '+'}
-                    </button>
-                `;
-                songsUl.appendChild(li);
-            }
+    function unflipCards() {
+        setTimeout(() => {
+            firstCard.classList.remove('flipped');
+            secondCard.classList.remove('flipped');
 
-            const addUserButtons = document.querySelectorAll('.add-user-btn');
-            addUserButtons.forEach(button => {
-                button.addEventListener('click', handleAddUserClick);
-            });
+            resetBoard();
+        }, 1500);
+    }
 
-            songListDiv.classList.remove('hidden');
-        } catch (error) {
-            console.error('Error loading songs:', error);
+    function resetBoard() {
+        [hasFlippedCard, lockBoard] = [false, false];
+        [firstCard, secondCard] = [null, null];
+        checkMemoryCompletion();
+    }
+
+    function checkMemoryCompletion() {
+        const allCards = document.querySelectorAll('.memory-card');
+        const flippedCards = document.querySelectorAll('.memory-card.flipped');
+
+        if (allCards.length === flippedCards.length) {
+            alert('Gratulacje! Ukończyłeś grę Memory!');
+            showSection('final-task');
         }
     }
 
-    async function handleAddUserClick(event) {
-        const songId = event.target.dataset.id;
-        const songRef = doc(db, 'songs', songId);
-        const songDoc = await getDoc(songRef);
-        const songData = songDoc.data();
-        const registeredUsers = songData.registeredUsers || [];
+    document.querySelectorAll('.memory-card').forEach(card => card.addEventListener('click', flipCard));
+    restartBtn.addEventListener('click', initMemoryGame);
+}
 
-        if (registeredUsers.includes(currentUsername)) {
-            await updateDoc(songRef, {
-                registeredUsers: arrayRemove(currentUsername)
-            });
-        } else {
-            await updateDoc(songRef, {
-                registeredUsers: arrayUnion(currentUsername)
-            });
-        }
-        loadSongs();
+// Funkcja do zapisywania nicku do Firestore
+async function saveUserToFirestore(tiktokNick) {
+    try {
+        const docRef = await addDoc(collection(db, "users"), {
+            tiktokNick: tiktokNick
+        });
+        console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+        console.error("Error adding document: ", e);
     }
+}
 
-    async function fetchThumbnailUrl(tiktokUrl) {
-        try {
-            const response = await fetch(`https://www.tiktok.com/oembed?url=${tiktokUrl}`);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            const data = await response.json();
-            return data.thumbnail_url;
-        } catch (error) {
-            console.error('Error fetching TikTok details:', error);
-            return null;
-        }
-    }
+// Funkcja do wysyłania końcowego zadania
+async function submitFinalTask() {
+    const tiktokNick = document.getElementById('tiktok-nick').value;
+    //const ip = await getUserIP();
+    //localStorage.setItem(ip, JSON.stringify({ tiktokNick }));
+    await saveUserToFirestore(tiktokNick); // Zapis do Firestore
+    alert("Zadanie wykonane! Wyślij wiadomość na IG z dowodem.");
+    location.reload();
+}
 
-    async function updateSongsWithThumbnails() {
-        const songsRef = collection(db, 'songs');
-        const songSnapshot = await getDocs(songsRef);
+// Funkcja do zmiany widoczności sekcji
+function showSection(sectionId) {
+    const sections = document.querySelectorAll('.screen');
+    sections.forEach(section => section.classList.add('hidden'));
+    document.getElementById(sectionId).classList.remove('hidden');
+}
 
-        for (const doc of songSnapshot.docs) {
-            const songData = doc.data();
-            const thumbnailUrl = await fetchThumbnailUrl(songData.tiktokUrl);
-            
-            if (thumbnailUrl) {
-                await updateDoc(doc.ref, { thumbnail: thumbnailUrl });
-            }
-        }
-    }
+// Inicjalizacja strony
+document.addEventListener('DOMContentLoaded', () => {
+    //checkUserParticipation();
 
-    // Uncomment the following line if you need to update thumbnails manually
-    // updateSongsWithThumbnails();
+    // Dodanie event listenerów
+    document.getElementById('access-code-btn').addEventListener('click', checkAccessCode);
+    document.getElementById('ig-followers-btn').addEventListener('click', checkIGFollowers);
+    document.getElementById('girl-nick-btn').addEventListener('click', checkGirlNick);
+    document.getElementById('final-task-btn').addEventListener('click', submitFinalTask);
 });
+
+// Funkcja do pobierania IP użytkownika (dostępna w kodzie)
+async function getUserIP() {
+    const response = await fetch('https://api.ipify.org?format=json');
+    const data = await response.json();
+    return data.ip;
+}
