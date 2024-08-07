@@ -13,7 +13,10 @@ body {
 .hidden {
     display: none;
 }
-
+h2{
+    padding: 0px;
+    margin-top: 80%;
+}
 h3 {
     color: #fff428;
 }
@@ -51,14 +54,14 @@ button:hover {
 }
 
 video {
-    max-width: 100%;
-    height: auto;
+    max-width: 80%;
+    height: 80%;
     margin: 10px 0;
 }
 
 #memory-board {
     display: grid;
-    grid-template-columns: repeat(4, 100px);
+    grid-template-columns: repeat(4, 100px); /* Utrzymuje planszę 4x4 */
     grid-gap: 10px;
     justify-content: center;
     margin: 20px auto;
@@ -120,29 +123,4 @@ video {
 
     #memory-board {
         grid-template-columns: repeat(3, 80px); /* Mniejsza liczba kolumn dla mniejszych ekranów */
-    }
-
-    .memory-card {
-        width: 80px;
-        height: 80px;
-        font-size: 1.5em;
-    }
-}
-
-/* Dostosowanie dla ekranów o szerokości mniejszej niż 400px */
-@media (max-width: 200px) {
-    input, button {
-        padding: 6px;
-        margin: 4px 0;
-    }
-
-    #memory-board {
-        grid-template-columns: repeat(2, 60px); /* Mniejsza liczba kolumn dla bardzo małych ekranów */
-    }
-
-    .memory-card {
-        width: 60px;
-        height: 60px;
-        font-size: 1em;
-    }
-}
+    }}
