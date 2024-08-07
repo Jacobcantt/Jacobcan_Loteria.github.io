@@ -1,47 +1,43 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jacobcan - Loteria!</title>
+    <title>Wyzwanie</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Jacobcan - Loteria!</h1>
-        <p class="instruction">Aby zagrać, wprowadź swoje dane, hasło i zaloguj się.</p>
-        <h5>Pamiętaj aby obserwować mnie na social mediach! (Jeśli wygrasz, a nie obserwujesz, to nie wygrywasz)</h5>
-
-        <form id="loginForm">
-            <input type="text" id="phoneNumber" placeholder="Numer telefonu" required>
-            <input type="email" id="email" placeholder="E-mail" required>
-            <input type="password" id="password" placeholder="Hasło" required>
-            <button type="submit">Zaloguj się</button>
-        </form>
-        
-        <div id="game" class="hidden">
-            <h2>Wybierz logo</h2>
-            <div class="logos">
-                <img src="images/logo1.png" class="logo" id="logo1">
-                <img src="images/logo2.png" class="logo" id="logo2">
-                <img src="images/logo3.png" class="logo" id="logo3">
+    <div id="container">
+        <div id="initial-screen" class="screen">
+            <h1>Wpisz kod, aby rozpocząć</h1>
+            <input type="password" id="access-code" placeholder="Kod">
+            <button id="access-code-btn">Zatwierdź</button>
+        </div>
+        <div id="question1" class="screen hidden">
+            <h2>Ile aktualnie osób obserwuje moje konto na IG "jacobcan_"?</h2>
+            <input type="number" id="ig-followers" placeholder="Liczba">
+            <button id="ig-followers-btn">Zatwierdź</button>
+        </div>
+        <div id="question2" class="screen hidden">
+            <h2>Jaki nick ma dziewczyna która została zamienona z inną w tym eddicie?</h2>
+            <video src="video.mp4" controls></video>
+            <input type="text" id="girl-nick" placeholder="Nick">
+            <button id="girl-nick-btn">Zatwierdź</button>
+        </div>
+        <div id="question3" class="screen hidden">
+            <h2>Gra Memory</h2>
+            <div id="memory-game-container">
+                <div id="memory-board"></div>
+                <button id="restart-btn">Restart</button>
             </div>
         </div>
-        <div id="result" class="hidden"></div>
-        <div id="taskList" class="hidden">
-            <h3>Zadania do wykonania:</h3>
-            <ul>
-                <li>Obserwuj konto <a href="https://www.tiktok.com/@jacobcan_?lang=pl-PL" target="_blank">@Jacobcan_</a> na TikToku</li>
-                <li>Obserwuj konto <a href="https://www.instagram.com/jacobcan_/" target="_blank">@Jacobcan_</a> na Instagramie</li>
-                <li>Wyślij wiadomość prywatną na IG/TT o treści: Jacobcan_loteria oraz screena strony z wygraną</li>
-                <li>Czekaj na przesyłkę!!</li>
-            </ul>
-        </div>
-        <div class="links">
-            <a href="https://jacobcantt.github.io/Privacy_policy/" target="_blank">Polityka prywatności</a> | 
-            <a href="https://jacobcantt.github.io/Terms-of-Service/" target="_blank">Warunki korzystania</a>
+        <div id="final-task" class="screen hidden">
+            <h2>Zadanie finałowe</h2>
+            <p>Wpisz swój nick z twojego TikToka poniżej:</p>
+            <input type="text" id="tiktok-nick" placeholder="Nick">
+            <button id="final-task-btn">Wyślij</button>
         </div>
     </div>
-    <script type="module" src="script.js"></script>
+    <script src="script.js" type="module"></script>
 </body>
 </html>
