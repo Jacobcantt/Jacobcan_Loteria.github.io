@@ -48,7 +48,7 @@ function checkIGFollowers() {
     if (inputFollowers === igFollowers) {
         showSection('question2');
     } else {
-        alert("Niepoprawna liczba filmów!");
+        alert("Niepoprawna liczba obserwujących!");
         location.reload();
     }
 }
