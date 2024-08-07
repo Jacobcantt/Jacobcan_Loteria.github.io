@@ -19,7 +19,7 @@ const db = getFirestore(app);
 
 const accessCode = 'qwert';
 const igFollowers = 221;
-const girlNick = 'NICK_GIRL';
+const validNicknames = ['czupryniakk', 'nadia'];
 
 // Funkcja do sprawdzenia, czy użytkownik już brał udział
 async function checkUserParticipation() {
@@ -55,12 +55,13 @@ function checkIGFollowers() {
 
 // Sprawdzenie nicku dziewczyny
 function checkGirlNick() {
-    const inputNick = document.getElementById('girl-nick').value;
-    if (inputNick === girlNick) {
+    const inputNick = document.getElementById('girl-nick').value.trim();
+
+    if (validNicknames.includes(inputNick)) {
         showSection('question3');
         initMemoryGame();
     } else {
-        alert("Niepoprawny nick!");
+        alert("Niepoprawny nick! Upewnij się, że wpisujesz poprawny nick z '@' na początku.");
         location.reload();
     }
 }
