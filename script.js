@@ -23,12 +23,12 @@ const validNicknames = ['czupryniakk', 'nadia'];
 
 // Funkcja do sprawdzenia, czy użytkownik już brał udział
 async function checkUserParticipation() {
-   /* const ip = await getUserIP();
+    const ip = await getUserIP();
     const participant = localStorage.getItem(ip);
     if (participant) {
-        alert("Już wziąłeś udział w wyzwaniu!");
+        alert("Już wziąłeś udział w konkursie!");
         document.body.innerHTML = "";
-    }*/
+    }
 }
 
 // Sprawdzenie kodu dostępu
@@ -48,7 +48,7 @@ function checkIGFollowers() {
     if (inputFollowers === igFollowers) {
         showSection('question2');
     } else {
-        alert("Niepoprawna liczba obserwujących!");
+        alert("Niepoprawna liczba filmów!");
         location.reload();
     }
 }
@@ -61,7 +61,7 @@ function checkGirlNick() {
         showSection('question3');
         initMemoryGame();
     } else {
-        alert("Niepoprawny nick! Upewnij się, że wpisujesz poprawny nick z '@' na początku.");
+        alert("Niepoprawny nick!");
         location.reload();
     }
 }
@@ -193,8 +193,8 @@ async function saveUserToFirestore(tiktokNick) {
 // Funkcja do wysyłania końcowego zadania
 async function submitFinalTask() {
     const tiktokNick = document.getElementById('tiktok-nick').value;
-    //const ip = await getUserIP();
-    //localStorage.setItem(ip, JSON.stringify({ tiktokNick }));
+    const ip = await getUserIP();
+    localStorage.setItem(ip, JSON.stringify({ tiktokNick }));
     await saveUserToFirestore(tiktokNick); // Zapis do Firestore
     alert("Brawo! Czekam na twoją wiadomość!");
     location.reload();
@@ -209,7 +209,7 @@ function showSection(sectionId) {
 
 // Inicjalizacja strony
 document.addEventListener('DOMContentLoaded', () => {
-    //checkUserParticipation();
+    checkUserParticipation();
 
     // Dodanie event listenerów
     document.getElementById('access-code-btn').addEventListener('click', checkAccessCode);
