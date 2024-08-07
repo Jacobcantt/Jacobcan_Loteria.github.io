@@ -16,7 +16,9 @@ body {
 
 h5 {
     padding: 0px;
-    margin-top: 60%;
+    margin-top: 50%;
+    margin-bottom: 5px;
+    font-size: 20px;
 }
 
 h3 {
@@ -133,6 +135,6 @@ video {
     }
 
     .memory-card {
-        font-size: 1.5em; /* Mniejsza czcionka na mniejszych ekranach */
+        font-size: 2em; /* Mniejsza czcionka na mniejszych ekranach */
     }
 }
