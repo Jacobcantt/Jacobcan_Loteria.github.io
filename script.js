@@ -17,8 +17,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const accessCode = 'qwert';
-const igFollowers = 221;
+const accessCode = 'JC8GH5OPL4F0';
+const igFollowers = 178;
 const validNicknames = ['czupryniakk', 'nadia'];
 
 // Funkcja do sprawdzenia, czy użytkownik już brał udział
