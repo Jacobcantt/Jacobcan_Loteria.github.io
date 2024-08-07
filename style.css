@@ -106,7 +106,7 @@ video {
 }
 
 /* Dostosowanie dla ekranów o szerokości mniejszej niż 600px */
-@media (max-width: 600px) {
+@media (max-width: 300px) {
     #container {
         padding: 10px;
         box-shadow: none;
@@ -130,7 +130,7 @@ video {
 }
 
 /* Dostosowanie dla ekranów o szerokości mniejszej niż 400px */
-@media (max-width: 400px) {
+@media (max-width: 200px) {
     input, button {
         padding: 6px;
         margin: 4px 0;
