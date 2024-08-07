@@ -1,6 +1,6 @@
 // Firebase SDK Imports
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
 
 // Konfiguracja Firebase
 const firebaseConfig = {
@@ -25,36 +25,56 @@ const validNicknames = ['czupryniakk', 'nadia'];
 async function checkUserParticipation() {
     const ip = await getUserIP();
     const participant = localStorage.getItem(ip);
+
     if (participant) {
         alert("Już wziąłeś udział w konkursie!");
         document.body.innerHTML = "";
+        return true;
+    } else {
+        const usersQuery = query(collection(db, "users"), where("ip", "==", ip));
+        const querySnapshot = await getDocs(usersQuery);
+        if (!querySnapshot.empty) {
+            alert("Już wziąłeś udział w konkursie!");
+            localStorage.setItem(ip, JSON.stringify({ participated: true }));
+            document.body.innerHTML = "";
+            return true;
+        }
     }
+    return false;
 }
 
 // Sprawdzenie kodu dostępu
-function checkAccessCode() {
+async function checkAccessCode() {
+    if (await checkUserParticipation()) return;
+
     const inputCode = document.getElementById('access-code').value;
     if (inputCode === accessCode) {
         showSection('question1');
     } else {
         alert("Niepoprawny kod!");
+        await markAsParticipated();
         location.reload();
     }
 }
 
 // Sprawdzenie liczby obserwujących na IG
-function checkIGFollowers() {
+async function checkIGFollowers() {
+    if (await checkUserParticipation()) return;
+
     const inputFollowers = parseInt(document.getElementById('ig-followers').value);
     if (inputFollowers === igFollowers) {
         showSection('question2');
     } else {
         alert("Niepoprawna liczba obserwujących!");
+        await markAsParticipated();
         location.reload();
     }
 }
 
 // Sprawdzenie nicku dziewczyny
-function checkGirlNick() {
+async function checkGirlNick() {
+    if (await checkUserParticipation()) return;
+
     const inputNick = document.getElementById('girl-nick').value.trim();
 
     if (validNicknames.includes(inputNick)) {
@@ -62,6 +82,7 @@ function checkGirlNick() {
         initMemoryGame();
     } else {
         alert("Niepoprawny nick!");
+        await markAsParticipated();
         location.reload();
     }
 }
@@ -180,14 +201,23 @@ function initMemoryGame() {
 
 // Funkcja do zapisywania nicku do Firestore
 async function saveUserToFirestore(tiktokNick) {
+    const ip = await getUserIP();
     try {
         const docRef = await addDoc(collection(db, "users"), {
-            tiktokNick: tiktokNick
+            tiktokNick: tiktokNick,
+            ip: ip
         });
         console.log("Document written with ID: ", docRef.id);
     } catch (e) {
         console.error("Error adding document: ", e);
     }
+}
+
+// Funkcja do oznaczania użytkownika jako uczestnika
+async function markAsParticipated() {
+    const ip = await getUserIP();
+    localStorage.setItem(ip, JSON.stringify({ participated: true }));
+    await saveUserToFirestore("invalid_attempt"); // Opcjonalnie można zapisać jako "invalid_attempt"
 }
 
 // Funkcja do wysyłania końcowego zadania
@@ -208,8 +238,8 @@ function showSection(sectionId) {
 }
 
 // Inicjalizacja strony
-document.addEventListener('DOMContentLoaded', () => {
-    checkUserParticipation();
+document.addEventListener('DOMContentLoaded', async () => {
+    if (await checkUserParticipation()) return;
 
     // Dodanie event listenerów
     document.getElementById('access-code-btn').addEventListener('click', checkAccessCode);
