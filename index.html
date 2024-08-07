@@ -3,29 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wyzwanie</title>
+    <title>Konkurs</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="container">
         <div id="initial-screen" class="screen">
             <h1>Wpisz kod, aby rozpocząć</h1>
+            <h3>Części kodu są porozrzucane po TikToku i Instagramie.</h3>
+            <h4>Zdobądź cały kod i wpisz go poniżej (12 znaków)</h4>
             <input type="password" id="access-code" placeholder="Kod">
             <button id="access-code-btn">Zatwierdź</button>
         </div>
         <div id="question1" class="screen hidden">
-            <h2>Ile aktualnie osób obserwuje moje konto na IG "jacobcan_"?</h2>
+            <h2>Ile aktualnie editów zostało opublikowanych na profilu Tiktok (jacobcan_)?</h2>
             <input type="number" id="ig-followers" placeholder="Liczba">
             <button id="ig-followers-btn">Zatwierdź</button>
         </div>
         <div id="question2" class="screen hidden">
-            <h2>Jaki nick ma dziewczyna która została zamienona z inną w tym eddicie?</h2>
+            <h5>Jaki nick ma dziewczyna która została zamienona z inną dziewczyną w tym edicie?</h5>
             <video src="video.mp4" controls></video>
-            <input type="text" id="girl-nick" placeholder="Nick">
+            <h4>Pamiętaj aby wpisać tutaj nazwę użytkownika razem z '@'. (Przykład:"@jacobcan_")</h4>
+            <input type="text" id="girl-nick" placeholder="@username">
             <button id="girl-nick-btn">Zatwierdź</button>
         </div>
         <div id="question3" class="screen hidden">
             <h2>Gra Memory</h2>
+            <h3>Wygraj grę aby przejść dalej</h3>
             <div id="memory-game-container">
                 <div id="memory-board"></div>
                 <button id="restart-btn">Restart</button>
@@ -33,7 +37,10 @@
         </div>
         <div id="final-task" class="screen hidden">
             <h2>Zadanie finałowe</h2>
-            <p>Wpisz swój nick z twojego TikToka poniżej:</p>
+            <h3>Napisz komentarz pod najnowszym moim editem</h3>
+            <h3>Uzyskaj dokładnie 5 polubień pod tym komentarzem</h3>
+            <h3>Jeżeli to zrobisz. Wyślij wiadomość pv na ig o treści:"Gotowe"</h3>
+            <p>Wpisz swój nick z twojego TikToka/Instagrama poniżej:</p>
             <input type="text" id="tiktok-nick" placeholder="Nick">
             <button id="final-task-btn">Wyślij</button>
         </div>
