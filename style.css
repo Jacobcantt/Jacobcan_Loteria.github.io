@@ -13,9 +13,9 @@ body {
 .hidden {
     display: none;
 }
-h2{
+h5 {
     padding: 0px;
-    margin-top: 80%;
+    margin-top: 60%;
 }
 h3 {
     color: #fff428;
