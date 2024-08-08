@@ -116,7 +116,54 @@ video {
     transform: rotateY(180deg);
 }
 
-/* Dostosowanie dla ekranów o szerokości mniejszej niż 600px */
+/* Stylowanie gry Wordle */
+#wordle-board {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 20px auto;
+    max-width: 300px;
+    max-height: 360px; /* Maksymalna wysokość planszy */
+    overflow-y: auto; /* Dodaj pionowe przewijanie, jeśli jest zbyt wiele wierszy */
+    gap: 5px;
+}
+
+.wordle-row {
+    display: flex;
+    width: 100%; /* Każdy wiersz zajmuje pełną szerokość */
+    gap: 5px;
+    justify-content: space-between;
+}
+
+.wordle-cell {
+    background-color: #444;
+    color: #fff;
+    box-shadow: 1px 1px 4px rgb(0, 0, 0);
+    flex: 1; /* Każda komórka zajmuje równą przestrzeń w wierszu */
+    min-width: 50px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5em;
+    border-radius: 5px;
+    border-style: solid;
+    border-width: 0px;
+    border-color: #ffffff;
+    box-sizing: border-box;
+}
+
+.wordle-cell.correct {
+    background-color: #538d4e; /* Zielony kolor dla poprawnych liter */
+}
+
+.wordle-cell.present {
+    background-color: #b59f3b; /* Żółty kolor dla liter w złym miejscu */
+}
+
+.wordle-cell.absent {
+    background-color: #3a3a3c; /* Szary kolor dla niepoprawnych liter */
+}
+
 @media (max-width: 600px) {
     #container {
         padding: 10px;
@@ -136,5 +183,15 @@ video {
 
     .memory-card {
         font-size: 2em; /* Mniejsza czcionka na mniejszych ekranach */
+    }
+
+    #wordle-board {
+        max-width: 90%; /* Dostosowanie szerokości planszy Wordle dla mniejszych ekranów */
+    }
+
+    .wordle-cell {
+        min-width: 40px; /* Mniejsza szerokość komórek na mniejszych ekranach */
+        height: 60px; /* Mniejsza wysokość komórek na mniejszych ekranach */
+        font-size: 1.4em;
     }
 }
