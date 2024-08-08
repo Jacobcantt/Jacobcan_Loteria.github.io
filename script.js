@@ -20,6 +20,8 @@ const db = getFirestore(app);
 const accessCode = 'JC8GH5OPL4F0';
 const igFollowers = 178;
 const validNicknames = ['czupryniakk', 'nadia'];
+const wordleWords = ['rower', 'drzwi', 'jacob', 'ekran', 'palec'];
+let wordleSolution = wordleWords[Math.floor(Math.random() * wordleWords.length)];
 
 // Funkcja do sprawdzenia, czy użytkownik już brał udział
 async function checkUserParticipation() {
@@ -79,7 +81,7 @@ async function checkGirlNick() {
 
     if (validNicknames.includes(inputNick)) {
         showSection('question3');
-        initMemoryGame();
+        initMemoryGame();  // Zainicjalizuj grę Memory
     } else {
         alert("Niepoprawny nick!");
         await markAsParticipated();
@@ -87,6 +89,7 @@ async function checkGirlNick() {
     }
 }
 
+// Inicjalizacja gry Memory
 function initMemoryGame() {
     const memoryBoard = document.getElementById('memory-board');
     const restartBtn = document.getElementById('restart-btn');
@@ -191,12 +194,67 @@ function initMemoryGame() {
 
         if (allCards.length === flippedCards.length) {
             alert('Gratulacje! Ukończyłeś grę Memory!');
-            showSection('final-task');
+            showSection('wordle-game');  // Przejście do gry Wordle po ukończeniu gry Memory
+            initWordleGame();  // Zainicjalizuj grę Wordle
         }
     }
 
     document.querySelectorAll('.memory-card').forEach(card => card.addEventListener('click', flipCard));
     restartBtn.addEventListener('click', initMemoryGame);
+}
+
+// Inicjalizacja gry Wordle
+function initWordleGame() {
+    const wordleBoard = document.getElementById('wordle-board');
+    const wordleGuessInput = document.getElementById('wordle-guess');
+    const wordleSubmitBtn = document.getElementById('wordle-submit-btn');
+    const wordleRestartBtn = document.getElementById('wordle-restart-btn');
+
+    wordleBoard.innerHTML = '';
+    wordleSolution = wordleWords[Math.floor(Math.random() * wordleWords.length)];
+    let attempts = 0;
+    const maxAttempts = 6;
+
+    wordleSubmitBtn.onclick = () => {
+        const guess = wordleGuessInput.value.toLowerCase();
+        if (guess.length !== 5) {
+            alert("Słowo musi mieć 5 liter!");
+            return;
+        }
+
+        attempts++;
+        const row = document.createElement('div');
+        row.classList.add('wordle-row');
+
+        for (let i = 0; i < 5; i++) {
+            const cell = document.createElement('div');
+            cell.classList.add('wordle-cell');
+            cell.textContent = guess[i];
+            if (guess[i] === wordleSolution[i]) {
+                cell.classList.add('correct');
+            } else if (wordleSolution.includes(guess[i])) {
+                cell.classList.add('present');
+            } else {
+                cell.classList.add('absent');
+            }
+            row.appendChild(cell);
+        }
+
+        wordleBoard.appendChild(row);
+        wordleGuessInput.value = '';
+
+        if (guess === wordleSolution) {
+            alert("Gratulacje! Odgadłeś słowo!");
+            showSection('final-task');
+        } else if (attempts === maxAttempts) {
+            alert(`Przegrałeś! Poprawne słowo to: ${wordleSolution}`);
+            initWordleGame();  // Automatyczny restart gry po porażce
+        }
+    };
+
+    wordleRestartBtn.onclick = () => {
+        initWordleGame();
+    };
 }
 
 // Funkcja do zapisywania nicku do Firestore
@@ -220,7 +278,7 @@ async function markAsParticipated() {
     await saveUserToFirestore("invalid_attempt"); // Opcjonalnie można zapisać jako "invalid_attempt"
 }
 
-// Funkcja do wysyłania końcowego zadania
+/* Funkcja do wysyłania końcowego zadania
 async function submitFinalTask() {
     const tiktokNick = document.getElementById('tiktok-nick').value;
     const ip = await getUserIP();
@@ -228,7 +286,7 @@ async function submitFinalTask() {
     await saveUserToFirestore(tiktokNick); // Zapis do Firestore
     alert("Brawo! Czekam na twoją wiadomość!");
     location.reload();
-}
+}*/
 
 // Funkcja do zmiany widoczności sekcji
 function showSection(sectionId) {
@@ -245,10 +303,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('access-code-btn').addEventListener('click', checkAccessCode);
     document.getElementById('ig-followers-btn').addEventListener('click', checkIGFollowers);
     document.getElementById('girl-nick-btn').addEventListener('click', checkGirlNick);
-    document.getElementById('final-task-btn').addEventListener('click', submitFinalTask);
+    //document.getElementById('final-task-btn').addEventListener('click', submitFinalTask);
 });
 
-// Funkcja do pobierania IP użytkownika (dostępna w kodzie)
+// Funkcja do pobierania IP użytkownika
 async function getUserIP() {
     const response = await fetch('https://api.ipify.org?format=json');
     const data = await response.json();
