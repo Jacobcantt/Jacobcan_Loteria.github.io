@@ -278,15 +278,8 @@ async function markAsParticipated() {
     await saveUserToFirestore("invalid_attempt"); // Opcjonalnie można zapisać jako "invalid_attempt"
 }
 
-/* Funkcja do wysyłania końcowego zadania
-async function submitFinalTask() {
-    const tiktokNick = document.getElementById('tiktok-nick').value;
-    const ip = await getUserIP();
-    localStorage.setItem(ip, JSON.stringify({ tiktokNick }));
-    await saveUserToFirestore(tiktokNick); // Zapis do Firestore
-    alert("Brawo! Czekam na twoją wiadomość!");
-    location.reload();
-}*/
+// Funkcja do wysyłania końcowego zadania
+
 
 // Funkcja do zmiany widoczności sekcji
 function showSection(sectionId) {
@@ -303,7 +296,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('access-code-btn').addEventListener('click', checkAccessCode);
     document.getElementById('ig-followers-btn').addEventListener('click', checkIGFollowers);
     document.getElementById('girl-nick-btn').addEventListener('click', checkGirlNick);
-    //document.getElementById('final-task-btn').addEventListener('click', submitFinalTask);
+
 });
 
 // Funkcja do pobierania IP użytkownika
