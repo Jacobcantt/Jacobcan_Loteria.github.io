@@ -36,14 +36,19 @@
                 <button id="restart-btn">Restart</button>
             </div>
         </div>
+        <div id="wordle-game" class="screen hidden">
+            <h2>Gra Wordle</h2>
+            <h3>Odgadnij słowo, aby przejść dalej</h3>
+            <div id="wordle-board"></div>
+            <input type="text" id="wordle-guess" maxlength="5" placeholder="Wpisz słowo (5 liter)">
+            <button id="wordle-submit-btn">Zatwierdź</button>
+            <button id="wordle-restart-btn">Restart</button>
+        </div>
         <div id="final-task" class="screen hidden">
             <h2>Zadanie finałowe</h2>
             <h3>Napisz komentarz pod najnowszym moim editem</h3>
             <h3>Uzyskaj dokładnie 5 polubień pod tym komentarzem</h3>
             <h3>Jeżeli to zrobisz. Wyślij wiadomość pv na ig o treści:"Gotowe"</h3>
-            <p>Wpisz swój nick z twojego TikToka/Instagrama poniżej:</p>
-            <input type="text" id="tiktok-nick" placeholder="Twój nick">
-            <button id="final-task-btn">Wyślij</button>
         </div>
     </div>
     <script src="script.js" type="module"></script>
