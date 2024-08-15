@@ -33,6 +33,8 @@
             <h2>Gra Memory</h2>
             <h3>Wygraj grę aby przejść dalej</h3>
             <div id="memory-game-container">
+                <div id="memory-timer"></div> <!-- Timer display -->
+                <div id="memory-attempts"></div> <!-- Memory attempts display -->
                 <div id="memory-board"></div>
                 <button id="restart-btn">Restart</button>
             </div>
@@ -41,6 +43,7 @@
             <h2>Gra Wordle</h2>
             <h3>Odgadnij słowo, aby przejść dalej</h3>
             <div id="wordle-board"></div>
+            <div id="wordle-attempts"></div> <!-- Wordle attempts display -->
             <input type="text" id="wordle-guess" maxlength="5" placeholder="Wpisz słowo (5 liter)">
             <button id="wordle-submit-btn">Zatwierdź</button>
             <button id="wordle-restart-btn">Restart</button>
@@ -67,6 +70,13 @@
                     <p>Cena: 3 pkt</p>
                     <button class="add-btn" data-product="Candy" data-price="3" id="dodaj-btn">Dodaj</button>
                     <button class="remove-btn" data-product="Candy" data-price="3" id="usun-btn">Usuń</button>
+                </div>
+                <div class="product">
+                    <img src="clothing.png" alt="Clothing">
+                    <h4>Clothing</h4>
+                    <p>Cena: 7 pkt</p>
+                    <button class="add-btn" data-product="Clothing" data-price="7" id="dodaj-btn">Dodaj</button>
+                    <button class="remove-btn" data-product="Clothing" data-price="7" id="usun-btn">Usuń</button>
                 </div>
                 <div class="product">
                     <img src="clothing.png" alt="Clothing">
