@@ -1,8 +1,8 @@
 // Firebase SDK Imports
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, query, where, updateDoc, doc } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
 
-// Konfiguracja Firebase
+// Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyAcw63opkkCEr44dafnWMGf-7N9tzVepxE",
     authDomain: "login-page-e09ea.firebaseapp.com",
@@ -13,7 +13,7 @@ const firebaseConfig = {
     measurementId: "G-H36NM4MTRF"
 };
 
-// Inicjalizacja Firebase i Firestore
+// Initialize Firebase and Firestore
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
@@ -23,73 +23,61 @@ const validNicknames = ['czupryniakk', 'nadia'];
 const wordleWords = ['rower', 'drzwi', 'jacob', 'ekran', 'palec'];
 let wordleSolution = wordleWords[Math.floor(Math.random() * wordleWords.length)];
 
-// Funkcja do sprawdzenia, czy użytkownik już brał udział
+// Function to check if the user has already participated based on Instagram URL
 async function checkUserParticipation() {
-    const ip = await getUserIP();
-    const participant = localStorage.getItem(ip);
-
-    if (participant) {
+    const instagramLink = document.getElementById('instagram-link').value.trim();
+    
+    const usersQuery = query(collection(db, "users"), where("instagramLink", "==", instagramLink));
+    const querySnapshot = await getDocs(usersQuery);
+    
+    if (!querySnapshot.empty) {
         alert("Już wziąłeś udział w konkursie!");
         document.body.innerHTML = "";
         return true;
-    } else {
-        const usersQuery = query(collection(db, "users"), where("ip", "==", ip));
-        const querySnapshot = await getDocs(usersQuery);
-        if (!querySnapshot.empty) {
-            alert("Już wziąłeś udział w konkursie!");
-            localStorage.setItem(ip, JSON.stringify({ participated: true }));
-            document.body.innerHTML = "";
-            return true;
-        }
     }
     return false;
 }
 
-// Sprawdzenie kodu dostępu
+// Function to verify the access code and proceed to the first question
 async function checkAccessCode() {
     if (await checkUserParticipation()) return;
 
     const inputCode = document.getElementById('access-code').value;
+    const instagramLink = document.getElementById('instagram-link').value.trim();
     if (inputCode === accessCode) {
+        await saveUserToFirestore(instagramLink);
         showSection('question1');
     } else {
         alert("Niepoprawny kod!");
-        await markAsParticipated();
         location.reload();
     }
 }
 
-// Sprawdzenie liczby obserwujących na IG
+// Function to check the number of Instagram followers
 async function checkIGFollowers() {
-    if (await checkUserParticipation()) return;
-
     const inputFollowers = parseInt(document.getElementById('ig-followers').value);
     if (inputFollowers === igFollowers) {
         showSection('question2');
     } else {
         alert("Niepoprawna liczba obserwujących!");
-        await markAsParticipated();
         location.reload();
     }
 }
 
-// Sprawdzenie nicku dziewczyny
+// Function to check the girl's nickname
 async function checkGirlNick() {
-    if (await checkUserParticipation()) return;
-
     const inputNick = document.getElementById('girl-nick').value.trim();
 
     if (validNicknames.includes(inputNick)) {
         showSection('question3');
-        initMemoryGame();  // Zainicjalizuj grę Memory
+        initMemoryGame();  // Initialize Memory Game
     } else {
         alert("Niepoprawny nick!");
-        await markAsParticipated();
         location.reload();
     }
 }
 
-// Inicjalizacja gry Memory
+// Initialize Memory Game
 function initMemoryGame() {
     const memoryBoard = document.getElementById('memory-board');
     const restartBtn = document.getElementById('restart-btn');
@@ -130,8 +118,8 @@ function initMemoryGame() {
         backFace.classList.add('back-face');
         backFace.textContent = '?';
 
-        card.appendChild(backFace);  // Dodajemy najpierw tylną stronę
-        card.appendChild(frontFace); // Następnie przednią stronę
+        card.appendChild(backFace);  // Add back face first
+        card.appendChild(frontFace); // Then front face
         memoryBoard.appendChild(card);
     });
 
@@ -194,8 +182,8 @@ function initMemoryGame() {
 
         if (allCards.length === flippedCards.length) {
             alert('Gratulacje! Ukończyłeś grę Memory!');
-            showSection('wordle-game');  // Przejście do gry Wordle po ukończeniu gry Memory
-            initWordleGame();  // Zainicjalizuj grę Wordle
+            showSection('wordle-game');  // Proceed to Wordle game
+            initWordleGame();  // Initialize Wordle Game
         }
     }
 
@@ -203,7 +191,7 @@ function initMemoryGame() {
     restartBtn.addEventListener('click', initMemoryGame);
 }
 
-// Inicjalizacja gry Wordle
+// Initialize Wordle Game
 function initWordleGame() {
     const wordleBoard = document.getElementById('wordle-board');
     const wordleGuessInput = document.getElementById('wordle-guess');
@@ -245,10 +233,10 @@ function initWordleGame() {
 
         if (guess === wordleSolution) {
             alert("Gratulacje! Odgadłeś słowo!");
-            showSection('final-task');
+            showSection('mini-store');  // Proceed to Mini Store after Wordle
         } else if (attempts === maxAttempts) {
             alert(`Przegrałeś! Poprawne słowo to: ${wordleSolution}`);
-            initWordleGame();  // Automatyczny restart gry po porażce
+            initWordleGame();  // Auto-restart Wordle game after failure
         }
     };
 
@@ -257,13 +245,98 @@ function initWordleGame() {
     };
 }
 
-// Funkcja do zapisywania nicku do Firestore
-async function saveUserToFirestore(tiktokNick) {
-    const ip = await getUserIP();
+// Mini Store Functionality
+let cart = {};
+let totalPoints = 20;
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.add-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const product = button.dataset.product;
+            const price = parseInt(button.dataset.price);
+            addToCart(product, price);
+        });
+    });
+
+    document.querySelectorAll('.remove-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const product = button.dataset.product;
+            const price = parseInt(button.dataset.price);
+            removeFromCart(product, price);
+        });
+    });
+
+    document.getElementById('save-cart-btn').addEventListener('click', saveCart);
+});
+
+function addToCart(product, price) {
+    if (!cart[product]) {
+        cart[product] = 0;
+    }
+    if (totalPoints - price >= 0) {
+        cart[product]++;
+        totalPoints -= price;
+        document.getElementById('total-points').textContent = totalPoints;
+        updateCartDisplay();
+    } else {
+        alert("Nie masz wystarczająco punktów.");
+    }
+}
+
+function removeFromCart(product, price) {
+    if (cart[product] > 0) {
+        cart[product]--;
+        totalPoints += price;
+        document.getElementById('total-points').textContent = totalPoints;
+        updateCartDisplay();
+    }
+}
+
+function updateCartDisplay() {
+    const cartItems = document.getElementById('cart-items');
+    cartItems.innerHTML = '';
+    for (const product in cart) {
+        if (cart[product] > 0) {
+            const item = document.createElement('li');
+            item.textContent = `${product}: ${cart[product]}`;
+            cartItems.appendChild(item);
+        }
+    }
+}
+
+// Function to save the cart to Firestore under the user's document
+async function saveCart() {
+    const instagramLink = document.getElementById('instagram-link').value.trim();
+    const userCart = [];
+
+    for (const product in cart) {
+        if (cart[product] > 0) {
+            userCart.push({ product: product, quantity: cart[product] });
+        }
+    }
+
+    const userQuery = query(collection(db, "users"), where("instagramLink", "==", instagramLink));
+    const querySnapshot = await getDocs(userQuery);
+    
+    if (!querySnapshot.empty) {
+        const userDoc = querySnapshot.docs[0];
+        const userRef = doc(db, "users", userDoc.id);
+        await updateDoc(userRef, {
+            cart: userCart
+        });
+        alert("Koszyk zapisany!");
+        showSection('final-task'); // Proceed to the final task
+    } else {
+        alert("Użytkownik nie został znaleziony.");
+    }
+}
+
+// Save user to Firestore
+async function saveUserToFirestore(instagramLink) {
     try {
         const docRef = await addDoc(collection(db, "users"), {
-            tiktokNick: tiktokNick,
-            ip: ip
+            instagramLink: instagramLink,
+            cart: [] // Initialize with an empty cart
         });
         console.log("Document written with ID: ", docRef.id);
     } catch (e) {
@@ -271,37 +344,17 @@ async function saveUserToFirestore(tiktokNick) {
     }
 }
 
-// Funkcja do oznaczania użytkownika jako uczestnika
-async function markAsParticipated() {
-    const ip = await getUserIP();
-    localStorage.setItem(ip, JSON.stringify({ participated: true }));
-    await saveUserToFirestore("invalid_attempt"); // Opcjonalnie można zapisać jako "invalid_attempt"
-}
-
-// Funkcja do wysyłania końcowego zadania
-
-
-// Funkcja do zmiany widoczności sekcji
+// Change section visibility
 function showSection(sectionId) {
     const sections = document.querySelectorAll('.screen');
     sections.forEach(section => section.classList.add('hidden'));
     document.getElementById(sectionId).classList.remove('hidden');
 }
 
-// Inicjalizacja strony
+// Initialize page
 document.addEventListener('DOMContentLoaded', async () => {
-    if (await checkUserParticipation()) return;
-
-    // Dodanie event listenerów
+    // Add event listeners
     document.getElementById('access-code-btn').addEventListener('click', checkAccessCode);
     document.getElementById('ig-followers-btn').addEventListener('click', checkIGFollowers);
     document.getElementById('girl-nick-btn').addEventListener('click', checkGirlNick);
-
 });
-
-// Funkcja do pobierania IP użytkownika
-async function getUserIP() {
-    const response = await fetch('https://api.ipify.org?format=json');
-    const data = await response.json();
-    return data.ip;
-}
