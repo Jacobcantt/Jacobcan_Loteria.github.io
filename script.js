@@ -22,6 +22,16 @@ const igFollowers = 178;
 const validNicknames = ['czupryniakk', 'nadia'];
 const wordleWords = ['rower', 'drzwi', 'jacob', 'ekran', 'palec'];
 let wordleSolution = wordleWords[Math.floor(Math.random() * wordleWords.length)];
+let wordleAttempts = 0; // Track total Wordle games
+let wordleGuesses = 0; // Track guesses in the current game
+let memoryAttempts = 0; // Track Memory game attempts
+let memoryTimer; // Memory game timer
+
+// Redirect to start page function
+function redirectToStart() {
+    alert("Przekroczono limit prób. Powrót do strony początkowej.");
+    location.reload(); // Reload to return to the initial page
+}
 
 // Function to check if the user has already participated based on Instagram URL
 async function checkUserParticipation() {
@@ -77,7 +87,7 @@ async function checkGirlNick() {
     }
 }
 
-// Initialize Memory Game
+// Initialize Memory Game with Timer and Attempt Limitation
 function initMemoryGame() {
     const memoryBoard = document.getElementById('memory-board');
     const restartBtn = document.getElementById('restart-btn');
@@ -136,6 +146,12 @@ function initMemoryGame() {
         if (!hasFlippedCard) {
             hasFlippedCard = true;
             firstCard = this;
+
+            // Start timer on the first card flip
+            if (!timerStarted) {
+                startMemoryTimer();
+                timerStarted = true;
+            }
             return;
         }
 
@@ -181,27 +197,56 @@ function initMemoryGame() {
         const flippedCards = document.querySelectorAll('.memory-card.flipped');
 
         if (allCards.length === flippedCards.length) {
+            clearInterval(memoryTimer); // Stop the timer on success
             alert('Gratulacje! Ukończyłeś grę Memory!');
             showSection('wordle-game');  // Proceed to Wordle game
             initWordleGame();  // Initialize Wordle Game
         }
     }
 
+    // Timer logic
+    let timerStarted = false;
+
+    function startMemoryTimer() {
+        const timerDisplay = document.createElement('div');
+        timerDisplay.id = 'memory-timer';
+        document.getElementById('memory-game-container').appendChild(timerDisplay);
+
+        let timeLeft = 60; // 60 seconds countdown
+        memoryTimer = setInterval(() => {
+            timerDisplay.textContent = `Pozostały czas: ${timeLeft}s`;
+            if (timeLeft <= 0) {
+                clearInterval(memoryTimer);
+                memoryAttempts++;
+                if (memoryAttempts >= 2) {
+                    redirectToStart(); // Redirect to start if failed twice
+                } else {
+                    alert("Czas się skończył! Spróbuj ponownie.");
+                    initMemoryGame(); // Restart the memory game
+                }
+            }
+            timeLeft--;
+        }, 1000);
+    }
+
+    // Event listeners
     document.querySelectorAll('.memory-card').forEach(card => card.addEventListener('click', flipCard));
     restartBtn.addEventListener('click', initMemoryGame);
 }
 
-// Initialize Wordle Game
+// Initialize Wordle Game with Attempt Limitation
 function initWordleGame() {
     const wordleBoard = document.getElementById('wordle-board');
     const wordleGuessInput = document.getElementById('wordle-guess');
     const wordleSubmitBtn = document.getElementById('wordle-submit-btn');
     const wordleRestartBtn = document.getElementById('wordle-restart-btn');
+    const attemptsDisplay = document.createElement('div');
+    attemptsDisplay.id = 'wordle-attempts';
+    wordleBoard.parentElement.appendChild(attemptsDisplay);
 
     wordleBoard.innerHTML = '';
     wordleSolution = wordleWords[Math.floor(Math.random() * wordleWords.length)];
-    let attempts = 0;
-    const maxAttempts = 6;
+    wordleGuesses = 0;
 
     wordleSubmitBtn.onclick = () => {
         const guess = wordleGuessInput.value.toLowerCase();
@@ -210,7 +255,7 @@ function initWordleGame() {
             return;
         }
 
-        attempts++;
+        wordleGuesses++;
         const row = document.createElement('div');
         row.classList.add('wordle-row');
 
@@ -233,16 +278,27 @@ function initWordleGame() {
 
         if (guess === wordleSolution) {
             alert("Gratulacje! Odgadłeś słowo!");
-            showSection('mini-store');  // Proceed to Mini Store after Wordle
-        } else if (attempts === maxAttempts) {
+            wordleAttempts++;
+            showSection('mini-store'); 
+        } else if (wordleGuesses === 6) {
             alert(`Przegrałeś! Poprawne słowo to: ${wordleSolution}`);
-            initWordleGame();  // Auto-restart Wordle game after failure
+            wordleAttempts++;
+            if (wordleAttempts >= 2) {
+                redirectToStart(); // Redirect to start after 2 games
+            } else {
+                alert("Rozpocznij nową grę Wordle!");
+                initWordleGame();
+            }
         }
+
+        attemptsDisplay.textContent = `Pozostałe gry: ${2 - wordleAttempts}, Pozostałe próby: ${6 - wordleGuesses}`;
     };
 
     wordleRestartBtn.onclick = () => {
         initWordleGame();
     };
+
+    attemptsDisplay.textContent = `Pozostałe gry: ${2 - wordleAttempts}, Pozostałe próby: ${6 - wordleGuesses}`;
 }
 
 // Mini Store Functionality
