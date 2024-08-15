@@ -164,6 +164,50 @@ video {
     background-color: #3a3a3c; /* Szary kolor dla niepoprawnych liter */
 }
 
+/* Stylowanie mini sklepu */
+#mini-store {
+    text-align: center;
+}
+
+#products {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.product {
+    background-color: #222;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 10px;
+    width: 150px;
+    text-align: center;
+}
+
+.product img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+#points-info {
+    margin-bottom: 20px;
+}
+
+#save-cart-btn {
+    margin-top: 20px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+}
+
+#save-cart-btn:hover {
+    background-color: #444;
+}
+
 @media (max-width: 600px) {
     #container {
         padding: 10px;
