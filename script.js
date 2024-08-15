@@ -18,7 +18,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 const accessCode = 'JC8GH5OPL4F0';
-const igFollowers = 178;
+const igFollowers = 180;
 const validNicknames = ['czupryniakk', 'nadia'];
 const wordleWords = ['rower', 'drzwi', 'jacob', 'ekran', 'palec'];
 let wordleSolution = wordleWords[Math.floor(Math.random() * wordleWords.length)];
