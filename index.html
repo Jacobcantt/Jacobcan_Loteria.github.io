@@ -8,6 +8,7 @@
 </head>
 <body>
     <div id="container">
+        <!-- Existing Sections -->
         <div id="initial-screen" class="screen">
             <h1>Wpisz kod, aby rozpocząć</h1>
             <h3>Części kodu są porozrzucane po TikToku i Instagramie.</h3>
@@ -44,6 +45,44 @@
             <button id="wordle-submit-btn">Zatwierdź</button>
             <button id="wordle-restart-btn">Restart</button>
         </div>
+        
+        <!-- Mini Store Section -->
+        <div id="mini-store" class="screen hidden">
+            <h2>Mini Store</h2>
+            <h3>Wydaj swoje punkty na produkty!</h3>
+            <div id="points-info">
+                <p>Punkty: <span id="total-points">20</span></p>
+            </div>
+            <div id="products">
+                <div class="product">
+                    <img src="gadget.png" alt="Gadget">
+                    <h4>Gadget</h4>
+                    <p>Cena: 5 pkt</p>
+                    <button class="add-btn" data-product="Gadget" data-price="5">Dodaj</button>
+                    <button class="remove-btn" data-product="Gadget" data-price="5">Usuń</button>
+                </div>
+                <div class="product">
+                    <img src="candy.png" alt="Candy">
+                    <h4>Candy</h4>
+                    <p>Cena: 3 pkt</p>
+                    <button class="add-btn" data-product="Candy" data-price="3">Dodaj</button>
+                    <button class="remove-btn" data-product="Candy" data-price="3">Usuń</button>
+                </div>
+                <div class="product">
+                    <img src="clothing.png" alt="Clothing">
+                    <h4>Clothing</h4>
+                    <p>Cena: 7 pkt</p>
+                    <button class="add-btn" data-product="Clothing" data-price="7">Dodaj</button>
+                    <button class="remove-btn" data-product="Clothing" data-price="7">Usuń</button>
+                </div>
+            </div>
+            <div id="cart-contents">
+                <h3>Twój koszyk</h3>
+                <ul id="cart-items"></ul>
+            </div>
+            <button id="save-cart-btn">Save</button>
+        </div>
+
         <div id="final-task" class="screen hidden">
             <h2>Zadanie finałowe</h2>
             <h3>Napisz komentarz pod najnowszym moim editem</h3>
