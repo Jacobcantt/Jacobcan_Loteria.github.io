@@ -1,6 +1,6 @@
 /* Basic Styles */
 body {
-    background-image: url("photo.jpg");
+    background-image: url("Tło_IG.png");
     background-color: #121212; /* Darker background for contrast */
     background-position: center;
     background-repeat: no-repeat;
@@ -13,7 +13,7 @@ body {
     height: 100vh;
     margin: 0;
     overflow-x: hidden;
-    animation: gradientShift 300s ease infinite;
+    animation: gradientShift 10s ease-in-out;
 }
 
 /* Particle Background Styles */
@@ -439,9 +439,9 @@ video {
 }
 
 @keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    0% { background-position: 50% 0%; }
+    50% { background-position: 50% 50%; }
+    100% { background-position: 50% 25%; }
 }
 
 @keyframes bounceIn {
