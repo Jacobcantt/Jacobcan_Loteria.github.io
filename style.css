@@ -112,7 +112,7 @@ h5 {
 /* Container Styles */
 #container {
     text-align: center;
-    max-width: 100%;
+    max-width: 90%;
     max-height: 90%;
     padding: 20px;
     background: rgba(0, 0, 0, 0.7);
@@ -455,6 +455,8 @@ video {
     #container {
         padding: 10px;
         box-shadow: none;
+        max-width: 90%;
+        max-height: 90%;
     }
 
     input, button {
