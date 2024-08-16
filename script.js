@@ -22,20 +22,47 @@ const igFollowers = 180;
 const validNicknames = ['czupryniakk', 'nadia'];
 const wordleWords = ['rower', 'drzwi', 'jacob', 'ekran', 'palec'];
 let wordleSolution = wordleWords[Math.floor(Math.random() * wordleWords.length)];
-let wordleAttempts = 0; // Track total Wordle games
-let wordleGuesses = 0; // Track guesses in the current game
-let memoryAttempts = 0; // Track Memory game attempts
-let memoryTimer; // Memory game timer
+let wordleAttempts = 0; 
+let wordleGuesses = 0; 
+let memoryAttempts = 0; 
+let memoryTimer; 
 
 // Redirect to start page function
 function redirectToStart() {
     alert("Przekroczono limit prób. Powrót do strony początkowej.");
-    location.reload(); // Reload to return to the initial page
+    location.reload(); 
 }
+
+// Function to handle Enter key submission
+function enableEnterKeySubmission(inputId, buttonId) {
+    const input = document.getElementById(inputId);
+    const button = document.getElementById(buttonId);
+
+    input.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault(); 
+            button.click(); 
+        }
+    });
+}
+
+// Apply the Enter key submission to all relevant inputs
+enableEnterKeySubmission('access-code', 'access-code-btn');
+enableEnterKeySubmission('instagram-link', 'access-code-btn');
+enableEnterKeySubmission('ig-followers', 'ig-followers-btn');
+enableEnterKeySubmission('girl-nick', 'girl-nick-btn');
+enableEnterKeySubmission('wordle-guess', 'wordle-submit-btn');
 
 // Function to check if the user has already participated based on Instagram URL
 async function checkUserParticipation() {
     const instagramLink = document.getElementById('instagram-link').value.trim();
+
+    // Validate the Instagram link
+    const instagramPattern = /^https:\/\/(www\.)?instagram\.com\/[a-zA-Z0-9._-]+\/?$/;
+    if (!instagramPattern.test(instagramLink)) {
+        alert("Proszę wpisać poprawny link do profilu Instagram.");
+        return true; // Prevent further action if link is invalid
+    }
     
     const usersQuery = query(collection(db, "users"), where("instagramLink", "==", instagramLink));
     const querySnapshot = await getDocs(usersQuery);
@@ -91,6 +118,12 @@ async function checkGirlNick() {
 function initMemoryGame() {
     const memoryBoard = document.getElementById('memory-board');
     const restartBtn = document.getElementById('restart-btn');
+    const timerDisplay = document.getElementById('memory-timer');
+    
+    // Clear previous game state and remove duplicate timers
+    if (timerDisplay) timerDisplay.remove();
+    clearInterval(memoryTimer);
+
     const cardArray = [
         { name: 'J', img: 'J' },
         { name: 'A', img: 'A' },
@@ -128,14 +161,15 @@ function initMemoryGame() {
         backFace.classList.add('back-face');
         backFace.textContent = '?';
 
-        card.appendChild(backFace);  // Add back face first
-        card.appendChild(frontFace); // Then front face
+        card.appendChild(backFace);  
+        card.appendChild(frontFace); 
         memoryBoard.appendChild(card);
     });
 
     let hasFlippedCard = false;
     let lockBoard = false;
     let firstCard, secondCard;
+    let timerStarted = false;
 
     function flipCard() {
         if (lockBoard) return;
@@ -147,7 +181,6 @@ function initMemoryGame() {
             hasFlippedCard = true;
             firstCard = this;
 
-            // Start timer on the first card flip
             if (!timerStarted) {
                 startMemoryTimer();
                 timerStarted = true;
@@ -197,39 +230,35 @@ function initMemoryGame() {
         const flippedCards = document.querySelectorAll('.memory-card.flipped');
 
         if (allCards.length === flippedCards.length) {
-            clearInterval(memoryTimer); // Stop the timer on success
+            clearInterval(memoryTimer);
             alert('Gratulacje! Ukończyłeś grę Memory!');
-            showSection('wordle-game');  // Proceed to Wordle game
-            initWordleGame();  // Initialize Wordle Game
+            showSection('wordle-game');  
+            initWordleGame();  
         }
     }
-
-    // Timer logic
-    let timerStarted = false;
 
     function startMemoryTimer() {
         const timerDisplay = document.createElement('div');
         timerDisplay.id = 'memory-timer';
         document.getElementById('memory-game-container').appendChild(timerDisplay);
 
-        let timeLeft = 60; // 60 seconds countdown
+        let timeLeft = 60; 
         memoryTimer = setInterval(() => {
             timerDisplay.textContent = `Pozostały czas: ${timeLeft}s`;
             if (timeLeft <= 0) {
                 clearInterval(memoryTimer);
                 memoryAttempts++;
                 if (memoryAttempts >= 2) {
-                    redirectToStart(); // Redirect to start if failed twice
+                    redirectToStart(); 
                 } else {
                     alert("Czas się skończył! Spróbuj ponownie.");
-                    initMemoryGame(); // Restart the memory game
+                    initMemoryGame(); 
                 }
             }
             timeLeft--;
         }, 1000);
     }
 
-    // Event listeners
     document.querySelectorAll('.memory-card').forEach(card => card.addEventListener('click', flipCard));
     restartBtn.addEventListener('click', initMemoryGame);
 }
@@ -240,13 +269,23 @@ function initWordleGame() {
     const wordleGuessInput = document.getElementById('wordle-guess');
     const wordleSubmitBtn = document.getElementById('wordle-submit-btn');
     const wordleRestartBtn = document.getElementById('wordle-restart-btn');
-    const attemptsDisplay = document.createElement('div');
-    attemptsDisplay.id = 'wordle-attempts';
-    wordleBoard.parentElement.appendChild(attemptsDisplay);
+    let attemptsDisplay = document.getElementById('wordle-attempts');
+
+    if (!attemptsDisplay) {
+        // Create the display element only if it doesn't already exist
+        attemptsDisplay = document.createElement('div');
+        attemptsDisplay.id = 'wordle-attempts';
+        wordleBoard.parentElement.appendChild(attemptsDisplay);
+    }
 
     wordleBoard.innerHTML = '';
     wordleSolution = wordleWords[Math.floor(Math.random() * wordleWords.length)];
     wordleGuesses = 0;
+
+    const updateAttemptsDisplay = () => {
+        attemptsDisplay.textContent = `Pozostałe gry: ${2 - wordleAttempts}, Pozostałe próby: ${6 - wordleGuesses}`;
+    };
+    updateAttemptsDisplay(); // Initial display
 
     wordleSubmitBtn.onclick = () => {
         const guess = wordleGuessInput.value.toLowerCase();
@@ -284,22 +323,21 @@ function initWordleGame() {
             alert(`Przegrałeś! Poprawne słowo to: ${wordleSolution}`);
             wordleAttempts++;
             if (wordleAttempts >= 2) {
-                redirectToStart(); // Redirect to start after 2 games
+                redirectToStart(); 
             } else {
                 alert("Rozpocznij nową grę Wordle!");
                 initWordleGame();
             }
+        } else {
+            updateAttemptsDisplay(); // Update display after each guess
         }
-
-        attemptsDisplay.textContent = `Pozostałe gry: ${2 - wordleAttempts}, Pozostałe próby: ${6 - wordleGuesses}`;
     };
 
     wordleRestartBtn.onclick = () => {
         initWordleGame();
     };
-
-    attemptsDisplay.textContent = `Pozostałe gry: ${2 - wordleAttempts}, Pozostałe próby: ${6 - wordleGuesses}`;
 }
+
 
 // Mini Store Functionality
 let cart = {};
@@ -381,7 +419,7 @@ async function saveCart() {
             cart: userCart
         });
         alert("Koszyk zapisany!");
-        showSection('final-task'); // Proceed to the final task
+        showSection('final-task'); 
     } else {
         alert("Użytkownik nie został znaleziony.");
     }
@@ -392,7 +430,7 @@ async function saveUserToFirestore(instagramLink) {
     try {
         const docRef = await addDoc(collection(db, "users"), {
             instagramLink: instagramLink,
-            cart: [] // Initialize with an empty cart
+            cart: [] 
         });
         console.log("Document written with ID: ", docRef.id);
     } catch (e) {
@@ -407,10 +445,42 @@ function showSection(sectionId) {
     document.getElementById(sectionId).classList.remove('hidden');
 }
 
-// Initialize page
+// Existing JavaScript Code
+// ... existing JavaScript code ...
+
+// Particle Configuration
+const particleConfig = {
+    particles: {
+        number: { value: 100 },
+        size: { value: 3 },
+        move: { speed: 1 }
+    },
+    interactivity: {
+        events: {
+            onhover: { enable: true, mode: "repulse" }
+        }
+    }
+};
+
+// Load particles.js with particle configuration
+document.addEventListener('DOMContentLoaded', () => {
+    particlesJS('particle-background', particleConfig);
+    
+    const logoAnimation = document.getElementById('logo-animation');
+    const particleBackground = document.getElementById('particle-background');
+    const container = document.getElementById('container');
+
+    setTimeout(() => {
+        logoAnimation.style.display = 'none';
+        particleBackground.style.display = 'none'; // Hide particle background
+        container.classList.remove('hidden');
+    }, 5000); // Wait for 5 seconds (3s animation + 2s fade out)
+});
+
+// Continue with existing initialization
 document.addEventListener('DOMContentLoaded', async () => {
-    // Add event listeners
     document.getElementById('access-code-btn').addEventListener('click', checkAccessCode);
     document.getElementById('ig-followers-btn').addEventListener('click', checkIGFollowers);
     document.getElementById('girl-nick-btn').addEventListener('click', checkGirlNick);
 });
+
