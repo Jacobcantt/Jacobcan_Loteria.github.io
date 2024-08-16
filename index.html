@@ -7,15 +7,25 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="particle-background"></div>
+    <div id="logo-animation">
+        <img src="logo.png" alt="Logo" id="animated-logo">
+    </div>
     <div id="container">
         <!-- Existing Sections -->
         <div id="initial-screen" class="screen">
-            <h1>Wpisz kod, aby rozpocząć</h1>
-            <h3>Części kodu są porozrzucane po TikToku i Instagramie.</h3>
-            <h4>Zdobądź cały kod i wpisz go poniżej (12 znaków)</h4>
+            <h1>KONKURS!</h1>
+            <h3>Wpisz kod, aby rozpocząć</h3>
+            <h4>Części kodu są porozrzucane po TikToku i Instagramie.</h4>
+            <h5>Zdobądź cały kod i wpisz go poniżej (12 znaków)</h5>
+            <p class="warning-text">Jeżeli pomylisz się w którymś zadaniu, strona się wyłącza i nie możesz podejść ponownie do konkursu!!</p>
             <input type="password" id="access-code" placeholder="Kod">
             <input type="text" id="instagram-link" placeholder="Link do Instagrama">
             <button id="access-code-btn">Zatwierdź</button>
+            <div id="legal-links">
+                <a href="https://jacobcantt.github.io/Privacy_policy/" target="_blank">Privacy Policy</a> |
+                <a href="https://jacobcantt.github.io/Terms-of-Service/" target="_blank">Terms of Service</a>
+            </div>
         </div>
         <div id="question1" class="screen hidden">
             <h2>Ile aktualnie editów zostało opublikowanych na profilu Tiktok (jacobcan_)?</h2>
@@ -51,10 +61,10 @@
         
         <!-- Mini Store Section -->
         <div id="mini-store" class="screen hidden">
-            <h2>Mini Store</h2>
-            <h3>Wydaj swoje punkty na produkty!</h3>
+            <h2>Spakuj swoją paczkę</h2>
+            <h3>Dodaj produkty do twojej paczki</h3>
             <div id="points-info">
-                <p>Punkty: <span id="total-points">20</span></p>
+                <p>Monety: <span id="total-points">20</span></p>
             </div>
             <div id="products">
                 <div class="product">
@@ -87,7 +97,7 @@
                 </div>
             </div>
             <div id="cart-contents">
-                <h3>Twój koszyk</h3>
+                <h6>Twoja paczka</h6>
                 <ul id="cart-items"></ul>
             </div>
             <button id="save-cart-btn">Save</button>
@@ -95,11 +105,12 @@
 
         <div id="final-task" class="screen hidden">
             <h2>Zadanie finałowe</h2>
-            <h3>Napisz komentarz pod najnowszym moim editem</h3>
+            <h3>Oznacz 3 osoby pod najnowszym moim editem</h3>
             <h3>Uzyskaj dokładnie 5 polubień pod tym komentarzem</h3>
             <h3>Jeżeli to zrobisz. Wyślij wiadomość pv na ig o treści:"Gotowe"</h3>
         </div>
     </div>
     <script src="script.js" type="module"></script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 </body>
 </html>
