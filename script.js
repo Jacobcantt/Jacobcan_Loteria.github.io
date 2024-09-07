@@ -96,7 +96,7 @@ async function checkIGFollowers() {
     if (inputFollowers === igFollowers) {
         showSection('question2');
     } else {
-        alert("Niepoprawna liczba obserwujących!");
+        alert("Niepoprawna liczba filmów!");
         location.reload();
     }
 }
@@ -109,7 +109,7 @@ async function checkGirlNick() {
         showSection('question3');
         initMemoryGame();  // Initialize Memory Game
     } else {
-        alert("Niepoprawny nick!");
+        alert("Niepoprawna nazwa!");
         location.reload();
     }
 }
