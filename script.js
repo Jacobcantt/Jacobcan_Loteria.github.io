@@ -77,6 +77,10 @@ async function checkUserParticipation() {
 
 // Function to verify the access code and proceed to the first question
 async function checkAccessCode() {
+    // Tymczasowa blokada udziału w konkursie
+    alert("Konkurs rozpoczyna się o 19:00. Spróbuj później!");
+    return;
+
     if (await checkUserParticipation()) return;
 
     const inputCode = document.getElementById('access-code').value;
@@ -90,13 +94,14 @@ async function checkAccessCode() {
     }
 }
 
+
 // Function to check the number of Instagram followers
 async function checkIGFollowers() {
     const inputFollowers = parseInt(document.getElementById('ig-followers').value);
     if (inputFollowers === igFollowers) {
         showSection('question2');
     } else {
-        alert("Niepoprawna liczba filmów!");
+        alert("Niepoprawna liczba obserwujących!");
         location.reload();
     }
 }
@@ -109,7 +114,7 @@ async function checkGirlNick() {
         showSection('question3');
         initMemoryGame();  // Initialize Memory Game
     } else {
-        alert("Niepoprawna nazwa!");
+        alert("Niepoprawny nick!");
         location.reload();
     }
 }
@@ -242,7 +247,7 @@ function initMemoryGame() {
         timerDisplay.id = 'memory-timer';
         document.getElementById('memory-game-container').appendChild(timerDisplay);
 
-        let timeLeft = 60; 
+        let timeLeft = 40; 
         memoryTimer = setInterval(() => {
             timerDisplay.textContent = `Pozostały czas: ${timeLeft}s`;
             if (timeLeft <= 0) {
