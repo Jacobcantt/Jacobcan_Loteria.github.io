@@ -427,6 +427,44 @@ video {
     text-decoration: underline;
 }
 
+#prizes-section {
+    text-align: center;
+    margin-top: 50px;
+}
+
+#prizes-gallery {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.prize-item {
+    width: 200px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.prize-item img {
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    transition: transform 0.3s ease, box-shadow 0.3s;
+}
+
+.prize-item:hover img {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+}
+
+.prize-item h4 {
+    color: #ffc107;
+    margin-top: 10px;
+    font-size: 1.2em;
+}
+
+
 /* Animations */
 @keyframes fadeIn {
     from { opacity: 0; }
