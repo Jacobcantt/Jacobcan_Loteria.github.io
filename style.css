@@ -463,6 +463,16 @@ video {
     margin-top: 10px;
     font-size: 1.2em;
 }
+#points-info {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: rgba(0, 0, 0, 0.7); /* Półprzezroczyste tło */
+    padding: 10px;
+    border-radius: 5px;
+    color: white;
+    z-index: 1000; /* Aby element znajdował się nad innymi */
+}
 
 
 /* Animations */
