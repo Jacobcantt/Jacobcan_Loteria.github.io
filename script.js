@@ -78,7 +78,7 @@ async function checkUserParticipation() {
 // Function to verify the access code and proceed to the first question
 async function checkAccessCode() {
     // Tymczasowa blokada udziału w konkursie
-    alert("Konkurs rozpoczyna się o 19:00. Spróbuj później!");
+    alert("Konkurs rozpoczyna się 13.09.2k24 o 19:00. Spróbuj później!");
     return;
 
     if (await checkUserParticipation()) return;
