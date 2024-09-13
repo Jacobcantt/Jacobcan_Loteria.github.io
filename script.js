@@ -57,8 +57,9 @@ enableEnterKeySubmission('wordle-guess', 'wordle-submit-btn');
 async function checkUserParticipation() {
     const instagramLink = document.getElementById('instagram-link').value.trim();
 
-    // Validate the Instagram link
-    const instagramPattern = /^https:\/\/(www\.)?instagram\.com\/[a-zA-Z0-9._-]+\/?$/;
+    // Zaktualizowany wzorzec walidacji linku, aby obsługiwać profile oraz linki z dodatkowymi ścieżkami
+    const instagramPattern = /^https:\/\/(www\.)?instagram\.com\/[a-zA-Z0-9._-]+(\/profilecard\/?\?igsh=[a-zA-Z0-9]+)?\/?$/;
+    
     if (!instagramPattern.test(instagramLink)) {
         alert("Proszę wpisać poprawny link do profilu Instagram.");
         return true; // Prevent further action if link is invalid
