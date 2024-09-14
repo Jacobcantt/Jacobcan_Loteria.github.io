@@ -58,8 +58,7 @@ async function checkUserParticipation() {
     const instagramLink = document.getElementById('instagram-link').value.trim();
 
     // Zaktualizowany wzorzec walidacji linku, aby obsługiwać profile oraz linki z dodatkowymi ścieżkami
-    const instagramPattern = /^https:\/\/(www\.)?instagram\.com\/[a-zA-Z0-9._-]+(\/profilecard\/?\?igsh=[a-zA-Z0-9]+)?\/?$/;
-    
+    const instagramPattern = /^https:\/\/(www\.)?instagram\.com\/[a-zA-Z0-9._-]+(\/\S*)?$/;    
     if (!instagramPattern.test(instagramLink)) {
         alert("Proszę wpisać poprawny link do profilu Instagram.");
         return true; // Prevent further action if link is invalid
